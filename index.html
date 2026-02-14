@@ -181,15 +181,13 @@
     .ok{color:#065f46; font-weight:850;}
     .legend{display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-top:10px; color:var(--muted); font-size:0.85rem;}
     .sw{width:14px; height:14px; border-radius:6px; border:1px solid rgba(17,24,39,0.12); display:inline-block;}
-    .searchBox{display:flex; gap:8px; align-items:center; margin-top:8px;}
-    .searchBox input{flex:1 1 auto;}
     .small{font-size:0.85rem; color:var(--muted);}
   </style>
 </head>
 <body>
 <header>
   <h1>Partnership Matchup Ratings</h1>
-  <div class="sub">Choose a metric → see z-scores by bowl type for each batter and the partnership.</div>
+  <div class="sub">Choose a metric → see raw z-scores by bowl type (no inversion or direction logic).</div>
 </header>
 
 <div class="wrap">
@@ -218,12 +216,12 @@
       </div>
 
       <div class="row" style="margin-top:10px;">
-        <div style="flex:1 1 150px; max-width:220px;">
+        <div style="flex:1 1 150px; max-width:240px;">
           <label for="metric">Metric</label>
           <select id="metric">
-            <option value="run">Run impact (higher z = better)</option>
-            <option value="wicket">Wicket impact (lower z = better)</option>
-            <option value="total">Total impact (lower z = better)</option>
+            <option value="run">Run impact</option>
+            <option value="wicket">Wicket impact</option>
+            <option value="total">Total impact</option>
           </select>
         </div>
 
@@ -276,13 +274,13 @@
         <div style="height:8px"></div>
         <div class="pill mono">wicket_pair = α·min(A_wk,B_wk) + (1-α)·max(A_wk,B_wk)</div>
         <div style="height:8px"></div>
-        <div>Tile colors are based on “better-ness” for the selected metric (run: higher is greener; wicket/total: lower is greener).</div>
+        <div>Tile colors are based on the <b>raw z-score</b> (higher = greener, lower = redder) for every metric.</div>
       </div>
 
       <div class="legend">
-        <span class="sw" style="background: rgb(220,38,38); opacity:0.85;"></span> worse
+        <span class="sw" style="background: rgb(220,38,38); opacity:0.85;"></span> low z
         <span class="sw" style="background: rgb(245,158,11); opacity:0.85;"></span> mid
-        <span class="sw" style="background: rgb(34,197,94); opacity:0.85;"></span> better
+        <span class="sw" style="background: rgb(34,197,94); opacity:0.85;"></span> high z
       </div>
     </div>
 
@@ -325,15 +323,15 @@
       </div>
 
       <div class="kpis">
-        <div class="kpi" id="finalBox" style="--heat: rgb(245,158,11);">
+        <div class="kpi" id="finalBox" style="--heat: rgba(229,231,235,0.9);">
           <div class="t" id="finalLabel">Final score (weighted z)</div>
           <div class="v" id="finalScore">—</div>
-          <div class="s" id="finalSub">Σ w × z (direction-adjusted)</div>
+          <div class="s" id="finalSub">Σ w × z / Σ w</div>
         </div>
         <div class="kpi" style="--heat: rgba(255,255,255,0.0); border-style:dashed;">
           <div class="t">Note</div>
           <div class="s" style="margin-top:8px; line-height:1.35;">
-            For wicket/total, “better” means <b>lower</b>, so we invert z internally for coloring and the final score.
+            This view shows <b>raw z-scores only</b>. No “lower is better” inversion is applied anywhere.
           </div>
         </div>
       </div>
@@ -351,7 +349,7 @@
  *  - baseline.json
  *  - weights.json
  */
-let RUN=null, WK=null, BALLS=null, BASE=null, FILE_WEIGHTS=null;
+let RUN=null, WK=null, BASE=null, FILE_WEIGHTS=null;
 let customWeights = null;
 let ALL_BATS = [];
 
@@ -378,10 +376,10 @@ function zscore(x, mean, std){
   return (x - mean) / s;
 }
 
-/* --- color mapping based on "goodness z" --- */
-function heatFromGoodZ(gz){
-  if(!Number.isFinite(gz)) return "rgba(229,231,235,0.9)";
-  const z = clamp(gz, -2.5, 2.5);
+/* raw z -> heat (higher = greener) */
+function heatFromZ(z){
+  if(!Number.isFinite(z)) return "rgba(229,231,235,0.9)";
+  const x = clamp(z, -2.5, 2.5);
 
   const red   = [220, 38, 38];
   const amber = [245,158, 11];
@@ -395,11 +393,11 @@ function heatFromGoodZ(gz){
     return `rgb(${rr},${gg},${bb})`;
   }
 
-  if(z < 0){
-    const t = (z + 2.5) / 2.5; // -2.5->0, 0->1
+  if(x < 0){
+    const t = (x + 2.5) / 2.5; // -2.5->0, 0->1
     return mix(red, amber, t);
   } else {
-    const t = z / 2.5; // 0->0, 2.5->1
+    const t = x / 2.5; // 0->0, 2.5->1
     return mix(amber, green, t);
   }
 }
@@ -485,17 +483,10 @@ function computePartnershipZ(batA, batB, bt, metric, alpha){
   return zscore(tot_pair, b.total_mean, b.total_std);
 }
 
-// for coloring + final score: run higher better; wicket/total lower better => invert
-function goodnessZ(z, metric){
-  if(!Number.isFinite(z)) return NaN;
-  return (metric === "run") ? z : -z;
-}
-
-function buildTile(bt, metricLabel, z, metric){
+function buildTile(bt, metricLabel, z){
   const div = document.createElement("div");
   div.className = "tile";
-  const gz = goodnessZ(z, metric);
-  div.style.setProperty("--heat", heatFromGoodZ(gz));
+  div.style.setProperty("--heat", heatFromZ(z));
   div.innerHTML = `
     <div class="top">
       <div class="bt mono">${bt}</div>
@@ -514,7 +505,7 @@ function renderBatterTiles(containerId, batName, metric){
   const label = (metric === "run") ? "RUN" : (metric === "wicket") ? "WICKET" : "TOTAL";
   bowlTypes.forEach(bt=>{
     const z = computeBatterZ(batName, bt, metric);
-    el.appendChild(buildTile(bt, label, z, metric));
+    el.appendChild(buildTile(bt, label, z));
   });
 }
 
@@ -525,21 +516,20 @@ function renderPartnershipTiles(containerId, batA, batB, metric, alpha){
   const label = (metric === "run") ? "RUN" : (metric === "wicket") ? "WICKET" : "TOTAL";
   bowlTypes.forEach(bt=>{
     const z = computePartnershipZ(batA, batB, bt, metric, alpha);
-    el.appendChild(buildTile(bt, label, z, metric));
+    el.appendChild(buildTile(bt, label, z));
   });
 }
 
-function computeFinalWeightedGoodZ(batA, batB, metric, alpha, weights){
+function computeFinalWeightedZ(batA, batB, metric, alpha, weights){
   const bowlTypes = RUN.bowl_types;
   let sum = 0;
   let wsum = 0;
 
   bowlTypes.forEach(bt=>{
     const z = computePartnershipZ(batA, batB, bt, metric, alpha);
-    const gz = goodnessZ(z, metric);
     const w = Number(weights?.[bt] ?? 0);
-    if(!Number.isFinite(gz) || !Number.isFinite(w) || w <= 0) return;
-    sum += w * gz;
+    if(!Number.isFinite(z) || !Number.isFinite(w) || w <= 0) return;
+    sum += w * z;
     wsum += w;
   });
 
@@ -616,7 +606,6 @@ function fillSelect(selectEl, bats, keepValue){
     o.value=name; o.textContent=name;
     selectEl.appendChild(o);
   });
-  // restore if possible
   if(current && bats.includes(current)) selectEl.value = current;
   else if(bats.length) selectEl.value = bats[0];
 }
@@ -633,6 +622,7 @@ function calc(){
   const batA = $("batA").value;
   const batB = $("batB").value;
   const metric = $("metric").value;
+
   const alpha = clamp(Number($("alpha").value || 0.67), 0, 1);
   $("alpha").value = alpha.toFixed(2);
 
@@ -662,13 +652,11 @@ function calc(){
   renderBatterTiles("tilesB", batB, metric);
   renderPartnershipTiles("tilesP", batA, batB, metric, alpha);
 
-  const finalGz = computeFinalWeightedGoodZ(batA, batB, metric, alpha, cw.w);
-  $("finalScore").textContent = fmt(finalGz, 2);
-
-  // final box heat based on goodness z
-  $("finalBox").style.setProperty("--heat", heatFromGoodZ(finalGz));
+  const finalZ = computeFinalWeightedZ(batA, batB, metric, alpha, cw.w);
+  $("finalScore").textContent = fmt(finalZ, 2);
+  $("finalBox").style.setProperty("--heat", heatFromZ(finalZ));
   $("finalLabel").textContent = `Final score (weighted z) · ${metricLabel}`;
-  $("finalSub").textContent = "Σ w × z (direction-adjusted) / Σ w";
+  $("finalSub").textContent = "Σ w × z / Σ w";
 
   setStatus("Calculated.", "ok");
 }
@@ -689,7 +677,6 @@ async function init(){
 
     RUN = await loadJSON("run_pivot.json");
     WK  = await loadJSON("wicket_pivot.json");
-    try{ BALLS = await loadJSON("balls_pivot.json"); }catch(e){ BALLS=null; }
     BASE = await loadJSON("baseline.json");
     FILE_WEIGHTS = await loadJSON("weights.json");
 
@@ -699,25 +686,23 @@ async function init(){
     populateInitialDropdowns(RUN.bats);
 
     $("calcBtn").addEventListener("click", calc);
-    ["batA","batB","metric","alpha","weightPreset","normalizeWeights"].forEach(id=>{
+
+    ["metric","alpha","weightPreset","normalizeWeights"].forEach(id=>{
       $(id).addEventListener("change", ()=>calc());
     });
-    $("copyWeights").addEventListener("click", copyWeightsJSON);
-    $("resetWeights").addEventListener("click", resetWeightsToFile);
 
-    $("searchA").addEventListener("input", ()=>{
-      applyFilter("A");
-      // keep selection stable; only recalc when selection changes
-    });
-    $("searchB").addEventListener("input", ()=>{
-      applyFilter("B");
-    });
-
-    // recalc when a filtered select changes
+    // When selection changes, recalc
     $("batA").addEventListener("change", ()=>calc());
     $("batB").addEventListener("change", ()=>calc());
 
-    // If user has saved weights, flip to custom automatically
+    // Search -> filter options (type-to-filter)
+    $("searchA").addEventListener("input", ()=>applyFilter("A"));
+    $("searchB").addEventListener("input", ()=>applyFilter("B"));
+
+    $("copyWeights").addEventListener("click", copyWeightsJSON);
+    $("resetWeights").addEventListener("click", resetWeightsToFile);
+
+    // If saved custom weights exist, default to custom
     try{
       const saved = localStorage.getItem("pm_custom_weights");
       if(saved){
