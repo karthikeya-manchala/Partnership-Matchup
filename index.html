@@ -21,7 +21,7 @@
     .sub{margin:6px 0 0; color:var(--muted); font-size:0.95rem;}
     .wrap{max-width:1200px; margin:0 auto; padding:12px 14px 42px;}
     .grid{display:grid; grid-template-columns: 1fr; gap:12px;}
-    @media(min-width: 980px){ .grid{grid-template-columns: 440px 1fr;} }
+    @media(min-width: 980px){ .grid{grid-template-columns: 460px 1fr;} }
 
     .card{
       background:var(--card);
@@ -86,7 +86,7 @@
       grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
     }
 
-    /* more apparent color */
+    /* Stronger heat */
     .tile{
       border:1px solid rgba(17,24,39,0.10);
       border-radius:16px;
@@ -94,19 +94,19 @@
       position:relative;
       overflow:hidden;
       min-height:88px;
-      background: linear-gradient(180deg, rgba(255,255,255,0.85), rgba(255,255,255,0.55));
       box-shadow: 0 6px 18px rgba(17,24,39,0.06);
+      background: rgba(255,255,255,0.65);
     }
     .tile::before{
       content:"";
       position:absolute; inset:0;
-      background: var(--heat, #ffffff);
-      opacity: 0.88; /* strong */
+      background: var(--heat, rgba(229,231,235,0.9));
+      opacity: 0.92;
     }
     .tile::after{
       content:"";
       position:absolute; inset:0;
-      background: radial-gradient(120px 80px at 20% 10%, rgba(255,255,255,0.55), rgba(255,255,255,0));
+      background: radial-gradient(130px 90px at 20% 10%, rgba(255,255,255,0.55), rgba(255,255,255,0));
       opacity:0.9;
       pointer-events:none;
     }
@@ -122,7 +122,7 @@
       border-radius:999px;
       border:1px solid rgba(255,255,255,0.55);
       background: rgba(255,255,255,0.25);
-      color: rgba(17,24,39,0.85);
+      color: rgba(17,24,39,0.88);
     }
     .tile .val{
       position:relative;
@@ -131,14 +131,12 @@
       letter-spacing:-0.03em;
       line-height:1.0;
       color: rgba(17,24,39,0.95);
-      text-shadow: 0 1px 0 rgba(255,255,255,0.25);
     }
     .tile .sub{
       position:relative;
       margin-top:4px;
-      color: rgba(17,24,39,0.70);
-      font-size:0.85rem;
-      letter-spacing:0.01em;
+      color: rgba(17,24,39,0.72);
+      font-size:0.86rem;
     }
 
     .kpis{
@@ -155,16 +153,17 @@
       overflow:hidden;
       box-shadow: 0 8px 22px rgba(17,24,39,0.06);
       min-height:88px;
+      background:#fff;
     }
     .kpi::before{
       content:"";
       position:absolute; inset:0;
-      background: var(--heat, #ffffff);
-      opacity: 0.88;
+      background: var(--heat, rgba(229,231,235,0.9));
+      opacity: 0.92;
     }
-    .kpi .t{position:relative; font-size:0.78rem; color: rgba(17,24,39,0.70); text-transform:uppercase; letter-spacing:0.10em;}
+    .kpi .t{position:relative; font-size:0.78rem; color: rgba(17,24,39,0.74); text-transform:uppercase; letter-spacing:0.10em;}
     .kpi .v{position:relative; font-size:2.2rem; font-weight:1000; margin-top:6px; letter-spacing:-0.03em;}
-    .kpi .s{position:relative; font-size:0.85rem; color: rgba(17,24,39,0.70); margin-top:4px;}
+    .kpi .s{position:relative; font-size:0.85rem; color: rgba(17,24,39,0.72); margin-top:4px;}
 
     .weights{
       border:1px solid var(--line);
@@ -182,12 +181,15 @@
     .ok{color:#065f46; font-weight:850;}
     .legend{display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-top:10px; color:var(--muted); font-size:0.85rem;}
     .sw{width:14px; height:14px; border-radius:6px; border:1px solid rgba(17,24,39,0.12); display:inline-block;}
+    .searchBox{display:flex; gap:8px; align-items:center; margin-top:8px;}
+    .searchBox input{flex:1 1 auto;}
+    .small{font-size:0.85rem; color:var(--muted);}
   </style>
 </head>
 <body>
 <header>
   <h1>Partnership Matchup Ratings</h1>
-  <div class="sub">Choose a metric → see 1–100 ratings by bowl type for each batter and the partnership.</div>
+  <div class="sub">Choose a metric → see z-scores by bowl type for each batter and the partnership.</div>
 </header>
 
 <div class="wrap">
@@ -196,11 +198,20 @@
     <!-- Controls -->
     <div class="card">
       <div class="row">
-        <div style="flex:1 1 180px; min-width:180px;">
+        <div style="flex:1 1 200px; min-width:200px;">
+          <label for="searchA">Search Batter 1</label>
+          <input id="searchA" placeholder="Type to filter…" />
+          <div class="small">Dropdown updates as you type.</div>
+          <div style="height:8px"></div>
           <label for="batA">Batter 1</label>
           <select id="batA"></select>
         </div>
-        <div style="flex:1 1 180px; min-width:180px;">
+
+        <div style="flex:1 1 200px; min-width:200px;">
+          <label for="searchB">Search Batter 2</label>
+          <input id="searchB" placeholder="Type to filter…" />
+          <div class="small">Dropdown updates as you type.</div>
+          <div style="height:8px"></div>
           <label for="batB">Batter 2</label>
           <select id="batB"></select>
         </div>
@@ -210,9 +221,9 @@
         <div style="flex:1 1 150px; max-width:220px;">
           <label for="metric">Metric</label>
           <select id="metric">
-            <option value="run">Run impact</option>
-            <option value="wicket">Wicket impact</option>
-            <option value="total">Total impact</option>
+            <option value="run">Run impact (higher z = better)</option>
+            <option value="wicket">Wicket impact (lower z = better)</option>
+            <option value="total">Total impact (lower z = better)</option>
           </select>
         </div>
 
@@ -265,20 +276,20 @@
         <div style="height:8px"></div>
         <div class="pill mono">wicket_pair = α·min(A_wk,B_wk) + (1-α)·max(A_wk,B_wk)</div>
         <div style="height:8px"></div>
-        <div>All tiles are converted from z-scores → <b>1–100 ratings</b>. For <b>wicket</b> and <b>total</b>, lower impact is better (so the rating direction is flipped internally).</div>
+        <div>Tile colors are based on “better-ness” for the selected metric (run: higher is greener; wicket/total: lower is greener).</div>
       </div>
 
       <div class="legend">
-        <span class="sw" style="background: rgb(220,38,38); opacity:0.85;"></span> low
+        <span class="sw" style="background: rgb(220,38,38); opacity:0.85;"></span> worse
         <span class="sw" style="background: rgb(245,158,11); opacity:0.85;"></span> mid
-        <span class="sw" style="background: rgb(34,197,94); opacity:0.85;"></span> high
+        <span class="sw" style="background: rgb(34,197,94); opacity:0.85;"></span> better
       </div>
     </div>
 
     <!-- Tiles + Output -->
     <div class="card">
       <div class="sectionTitle">
-        <div class="k">Ratings by bowl type</div>
+        <div class="k">Z-scores by bowl type</div>
         <div class="m" id="metaRight">—</div>
       </div>
 
@@ -315,20 +326,16 @@
 
       <div class="kpis">
         <div class="kpi" id="finalBox" style="--heat: rgb(245,158,11);">
-          <div class="t" id="finalLabel">Final rating (1–100)</div>
-          <div class="v" id="finalRating">—</div>
-          <div class="s" id="finalSub">Weighted average across bowl types</div>
+          <div class="t" id="finalLabel">Final score (weighted z)</div>
+          <div class="v" id="finalScore">—</div>
+          <div class="s" id="finalSub">Σ w × z (direction-adjusted)</div>
         </div>
         <div class="kpi" style="--heat: rgba(255,255,255,0.0); border-style:dashed;">
-          <div class="t">How it’s built</div>
+          <div class="t">Note</div>
           <div class="s" style="margin-top:8px; line-height:1.35;">
-            For each bowl type: compute z-score vs baseline → convert to percentile → map to 1–100. Then take weighted average using your weights.
+            For wicket/total, “better” means <b>lower</b>, so we invert z internally for coloring and the final score.
           </div>
         </div>
-      </div>
-
-      <div class="hint" style="margin-top:10px;">
-        If a batter/bowl-type is missing from the JSON pivots, it’s treated as 0.
       </div>
     </div>
 
@@ -337,66 +344,45 @@
 
 <script>
 /**
- * JSON files expected in the SAME folder as index.html (repo root):
+ * JSON files expected in the SAME folder as index.html:
  *  - run_pivot.json
  *  - wicket_pivot.json
  *  - balls_pivot.json (optional)
  *  - baseline.json
  *  - weights.json
  */
-
 let RUN=null, WK=null, BALLS=null, BASE=null, FILE_WEIGHTS=null;
 let customWeights = null;
+let ALL_BATS = [];
 
 const $ = (id)=>document.getElementById(id);
 
 function clamp(v, lo, hi){ return Math.min(hi, Math.max(lo, v)); }
-function fmt(x, d=3){
+function fmt(x, d=2){
   if(x===null || x===undefined || Number.isNaN(x)) return "—";
   const n = Number(x);
   if(!Number.isFinite(n)) return "—";
   return n.toFixed(d);
 }
-
 async function loadJSON(url){
   const res = await fetch(url, {cache:"no-store"});
   if(!res.ok) throw new Error(`Failed to load ${url} (${res.status})`);
   return await res.json();
 }
-
 function setStatus(msg, kind=""){
   const el=$("status");
   el.innerHTML = kind ? `<span class="${kind}">${msg}</span>` : msg;
 }
-
-/* --- stats helpers --- */
 function zscore(x, mean, std){
   const s = (std && std!==0) ? std : 1;
   return (x - mean) / s;
 }
 
-// Normal CDF approximation -> percentile [0..1]
-function normCdf(z){
-  // Abramowitz & Stegun style erf approximation.
-  // Good enough for rating mapping.
-  const sign = z < 0 ? -1 : 1;
-  const x = Math.abs(z) / Math.sqrt(2);
-  const t = 1 / (1 + 0.3275911 * x);
-  const a1=0.254829592, a2=-0.284496736, a3=1.421413741, a4=-1.453152027, a5=1.061405429;
-  const erf = sign * (1 - (((((a5*t + a4)*t + a3)*t + a2)*t + a1)*t) * Math.exp(-x*x));
-  return 0.5 * (1 + erf);
-}
+/* --- color mapping based on "goodness z" --- */
+function heatFromGoodZ(gz){
+  if(!Number.isFinite(gz)) return "rgba(229,231,235,0.9)";
+  const z = clamp(gz, -2.5, 2.5);
 
-function zToRating(zGood){
-  // clamp extreme z to avoid overly hard saturation
-  const z = clamp(zGood, -3.0, 3.0);
-  const p = normCdf(z); // 0..1
-  const r = Math.round(1 + 99 * p); // 1..100
-  return clamp(r, 1, 100);
-}
-
-/* --- color mapping (more apparent) --- */
-function ratingColor(r){
   const red   = [220, 38, 38];
   const amber = [245,158, 11];
   const green = [ 34,197, 94];
@@ -409,12 +395,13 @@ function ratingColor(r){
     return `rgb(${rr},${gg},${bb})`;
   }
 
-  // 1..100 -> red -> amber -> green
-  const x = clamp((r - 1) / 99, 0, 1);
-  if(x < 0.5){
-    return mix(red, amber, x / 0.5);
+  if(z < 0){
+    const t = (z + 2.5) / 2.5; // -2.5->0, 0->1
+    return mix(red, amber, t);
+  } else {
+    const t = z / 2.5; // 0->0, 2.5->1
+    return mix(amber, green, t);
   }
-  return mix(amber, green, (x - 0.5) / 0.5);
 }
 
 function getVal(pivot, bat, bt){
@@ -456,7 +443,6 @@ function currentWeights(bowlTypes){
     });
     return { w, sum };
   }
-  // default file
   const w0 = FILE_WEIGHTS || {};
   const w = {};
   let sum = 0;
@@ -468,21 +454,20 @@ function currentWeights(bowlTypes){
   return { w, sum };
 }
 
-/* --- rating computation per entity --- */
-function computeBatterMetricZ(bat, bt, metric){
+/* --- z for each entity --- */
+function computeBatterZ(bat, bt, metric){
   const run = getVal(RUN, bat, bt);
   const wk  = getVal(WK,  bat, bt);
   const tot = run + wk;
-
   const b = BASE?.[bt] || null;
   if(!b) return NaN;
 
-  if(metric === "run")   return zscore(run, b.run_mean, b.run_std);
-  if(metric === "wicket")return zscore(wk,  b.wk_mean,  b.wk_std);
-  return zscore(tot, b.total_mean, b.total_std); // total
+  if(metric === "run") return zscore(run, b.run_mean, b.run_std);
+  if(metric === "wicket") return zscore(wk, b.wk_mean, b.wk_std);
+  return zscore(tot, b.total_mean, b.total_std);
 }
 
-function computePartnershipMetricZ(batA, batB, bt, metric, alpha){
+function computePartnershipZ(batA, batB, bt, metric, alpha){
   const A_run = getVal(RUN, batA, bt);
   const B_run = getVal(RUN, batB, bt);
   const A_wk  = getVal(WK,  batA, bt);
@@ -495,80 +480,71 @@ function computePartnershipMetricZ(batA, batB, bt, metric, alpha){
   const b = BASE?.[bt] || null;
   if(!b) return NaN;
 
-  if(metric === "run")   return zscore(run_pair, b.run_mean, b.run_std);
-  if(metric === "wicket")return zscore(wk_pair,  b.wk_mean,  b.wk_std);
+  if(metric === "run") return zscore(run_pair, b.run_mean, b.run_std);
+  if(metric === "wicket") return zscore(wk_pair, b.wk_mean, b.wk_std);
   return zscore(tot_pair, b.total_mean, b.total_std);
 }
 
-// For wicket/total, lower impact is better => flip direction for rating.
-// We never show "good-z", just use it internally to produce a 1-100 rating.
-function zToMetricRating(z, metric){
-  if(!Number.isFinite(z)) return null;
-  const zGood = (metric === "run") ? z : -z;
-  return zToRating(zGood);
+// for coloring + final score: run higher better; wicket/total lower better => invert
+function goodnessZ(z, metric){
+  if(!Number.isFinite(z)) return NaN;
+  return (metric === "run") ? z : -z;
 }
 
-function buildTile(bt, metricLabel, rating){
+function buildTile(bt, metricLabel, z, metric){
   const div = document.createElement("div");
   div.className = "tile";
-  const col = rating === null ? "rgb(229,231,235)" : ratingColor(rating);
-  div.style.setProperty("--heat", col);
-
+  const gz = goodnessZ(z, metric);
+  div.style.setProperty("--heat", heatFromGoodZ(gz));
   div.innerHTML = `
     <div class="top">
       <div class="bt mono">${bt}</div>
       <div class="tag">${metricLabel}</div>
     </div>
-    <div class="val">${rating === null ? "—" : rating}</div>
-    <div class="sub">1–100 rating</div>
+    <div class="val">${fmt(z, 2)}</div>
+    <div class="sub">z-score</div>
   `;
   return div;
 }
 
 function renderBatterTiles(containerId, batName, metric){
-  const bowlTypes = RUN.bowl_types;
   const el = $(containerId);
   el.innerHTML = "";
-
+  const bowlTypes = RUN.bowl_types;
   const label = (metric === "run") ? "RUN" : (metric === "wicket") ? "WICKET" : "TOTAL";
-
   bowlTypes.forEach(bt=>{
-    const z = computeBatterMetricZ(batName, bt, metric);
-    const r = zToMetricRating(z, metric);
-    el.appendChild(buildTile(bt, label, r));
+    const z = computeBatterZ(batName, bt, metric);
+    el.appendChild(buildTile(bt, label, z, metric));
   });
 }
 
 function renderPartnershipTiles(containerId, batA, batB, metric, alpha){
-  const bowlTypes = RUN.bowl_types;
   const el = $(containerId);
   el.innerHTML = "";
-
+  const bowlTypes = RUN.bowl_types;
   const label = (metric === "run") ? "RUN" : (metric === "wicket") ? "WICKET" : "TOTAL";
-
   bowlTypes.forEach(bt=>{
-    const z = computePartnershipMetricZ(batA, batB, bt, metric, alpha);
-    const r = zToMetricRating(z, metric);
-    el.appendChild(buildTile(bt, label, r));
+    const z = computePartnershipZ(batA, batB, bt, metric, alpha);
+    el.appendChild(buildTile(bt, label, z, metric));
   });
 }
 
-function computeFinalRating(batA, batB, metric, alpha, weights){
+function computeFinalWeightedGoodZ(batA, batB, metric, alpha, weights){
   const bowlTypes = RUN.bowl_types;
-  let totalW = 0;
   let sum = 0;
+  let wsum = 0;
 
   bowlTypes.forEach(bt=>{
-    const z = computePartnershipMetricZ(batA, batB, bt, metric, alpha);
-    const r = zToMetricRating(z, metric);
+    const z = computePartnershipZ(batA, batB, bt, metric, alpha);
+    const gz = goodnessZ(z, metric);
     const w = Number(weights?.[bt] ?? 0);
-    if(r === null || !Number.isFinite(w) || w <= 0) return;
-    sum += w * r;
-    totalW += w;
+    if(!Number.isFinite(gz) || !Number.isFinite(w) || w <= 0) return;
+    sum += w * gz;
+    wsum += w;
   });
 
-  if(totalW <= 0) return null;
-  return Math.round(sum / totalW);
+  if(wsum <= 0) return NaN;
+  return sum / wsum;
 }
 
 /* --- weights editor --- */
@@ -631,18 +607,37 @@ function resetWeightsToFile(){
   calc();
 }
 
+/* --- searchable dropdowns (type-to-filter) --- */
+function fillSelect(selectEl, bats, keepValue){
+  const current = keepValue ?? selectEl.value;
+  selectEl.innerHTML = "";
+  bats.forEach(name=>{
+    const o=document.createElement("option");
+    o.value=name; o.textContent=name;
+    selectEl.appendChild(o);
+  });
+  // restore if possible
+  if(current && bats.includes(current)) selectEl.value = current;
+  else if(bats.length) selectEl.value = bats[0];
+}
+
+function applyFilter(which){
+  const q = (which === "A" ? $("searchA").value : $("searchB").value).trim().toLowerCase();
+  const sel = which === "A" ? $("batA") : $("batB");
+  const filtered = q ? ALL_BATS.filter(n => n.toLowerCase().includes(q)) : ALL_BATS.slice();
+  fillSelect(sel, filtered, sel.value);
+}
+
 /* --- main calc --- */
 function calc(){
   const batA = $("batA").value;
   const batB = $("batB").value;
   const metric = $("metric").value;
-
   const alpha = clamp(Number($("alpha").value || 0.67), 0, 1);
   $("alpha").value = alpha.toFixed(2);
 
   const bowlTypes = RUN.bowl_types;
 
-  // weights
   const cw = currentWeights(bowlTypes);
   $("weightSum").textContent = `sum: ${fmt(cw.sum, 3)}`;
 
@@ -667,30 +662,25 @@ function calc(){
   renderBatterTiles("tilesB", batB, metric);
   renderPartnershipTiles("tilesP", batA, batB, metric, alpha);
 
-  const final = computeFinalRating(batA, batB, metric, alpha, cw.w);
-  const finalEl = $("finalRating");
-  finalEl.textContent = final === null ? "—" : final;
+  const finalGz = computeFinalWeightedGoodZ(batA, batB, metric, alpha, cw.w);
+  $("finalScore").textContent = fmt(finalGz, 2);
 
-  const finalBox = $("finalBox");
-  finalBox.style.setProperty("--heat", final === null ? "rgb(229,231,235)" : ratingColor(final));
-
-  // label tweak so it's clear it's for the chosen metric
-  $("finalLabel").textContent = `Final rating (1–100) · ${metricLabel}`;
-  $("finalSub").textContent = "Weighted average across bowl types";
+  // final box heat based on goodness z
+  $("finalBox").style.setProperty("--heat", heatFromGoodZ(finalGz));
+  $("finalLabel").textContent = `Final score (weighted z) · ${metricLabel}`;
+  $("finalSub").textContent = "Σ w × z (direction-adjusted) / Σ w";
 
   setStatus("Calculated.", "ok");
 }
 
-function populateDropdowns(bats){
-  const a=$("batA"), b=$("batB");
-  a.innerHTML=""; b.innerHTML="";
-  bats.forEach(name=>{
-    const oa=document.createElement("option");
-    oa.value=name; oa.textContent=name;
-    const ob=oa.cloneNode(true);
-    a.appendChild(oa); b.appendChild(ob);
-  });
-  if(bats.length>=2){ a.value=bats[0]; b.value=bats[1]; }
+function populateInitialDropdowns(bats){
+  ALL_BATS = bats.slice();
+  fillSelect($("batA"), bats, null);
+  fillSelect($("batB"), bats, null);
+  if(bats.length >= 2){
+    $("batA").value = bats[0];
+    $("batB").value = bats[1];
+  }
 }
 
 async function init(){
@@ -706,7 +696,7 @@ async function init(){
     if(!RUN?.bats?.length) throw new Error("run_pivot.json missing bats[]");
     if(!RUN?.bowl_types?.length) throw new Error("run_pivot.json missing bowl_types[]");
 
-    populateDropdowns(RUN.bats);
+    populateInitialDropdowns(RUN.bats);
 
     $("calcBtn").addEventListener("click", calc);
     ["batA","batB","metric","alpha","weightPreset","normalizeWeights"].forEach(id=>{
@@ -714,6 +704,18 @@ async function init(){
     });
     $("copyWeights").addEventListener("click", copyWeightsJSON);
     $("resetWeights").addEventListener("click", resetWeightsToFile);
+
+    $("searchA").addEventListener("input", ()=>{
+      applyFilter("A");
+      // keep selection stable; only recalc when selection changes
+    });
+    $("searchB").addEventListener("input", ()=>{
+      applyFilter("B");
+    });
+
+    // recalc when a filtered select changes
+    $("batA").addEventListener("change", ()=>calc());
+    $("batB").addEventListener("change", ()=>calc());
 
     // If user has saved weights, flip to custom automatically
     try{
