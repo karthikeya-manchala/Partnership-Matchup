@@ -143,7 +143,7 @@
           <div style="height:6px"></div>
           <div class="pill mono">wicket_pair = α·min(A_wk,B_wk) + (1-α)·max(A_wk,B_wk)</div>
           <div style="height:6px"></div>
-          <div class="small">Notes: wicket values are "wicket_run_impact" (lower is better; pairing rewards the *better* wicket profile). Z-scores are computed vs the baseline distribution in <span class="mono">data/baseline.json</span>.</div>
+          <div class="small">Notes: wicket values are "wicket_run_impact" (lower is better; pairing rewards the *better* wicket profile). Z-scores are computed vs the baseline distribution in <span class="mono">baseline.json</span>.</div>
         </div>
       </div>
 
@@ -343,11 +343,11 @@ async function init(){
   try{
     setStatus("Loading data…");
     // These are small fetches; keep separate for clearer errors.
-    RUN = await loadJSON("data/run_pivot.json");
-    WK  = await loadJSON("data/wicket_pivot.json");
-    try{ BALLS = await loadJSON("data/balls_pivot.json"); }catch(e){ BALLS=null; }
-    BASE = await loadJSON("data/baseline.json");
-    WEIGHTS = await loadJSON("data/weights.json");
+    RUN = await loadJSON("run_pivot.json");
+    WK  = await loadJSON("wicket_pivot.json");
+    try{ BALLS = await loadJSON("balls_pivot.json"); }catch(e){ BALLS=null; }
+    BASE = await loadJSON("baseline.json");
+    WEIGHTS = await loadJSON("weights.json");
 
     if(!RUN?.bats?.length) throw new Error("run_pivot.json missing bats[]");
     if(!RUN?.bowl_types?.length) throw new Error("run_pivot.json missing bowl_types[]");
@@ -364,7 +364,7 @@ async function init(){
     calc();
   }catch(err){
     console.error(err);
-    setStatus(`Error: ${err.message}. Check your /data/*.json files.`, "err");
+    setStatus(`Error: ${err.message}. Check your /*.json files.`, "err");
     $("calcBtn").disabled = true;
   }
 }
