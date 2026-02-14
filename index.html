@@ -1,0 +1,375 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Partnership Matchup Ratings</title>
+  <style>
+    :root{
+      --bg:#f6f3ed; --card:#ffffff; --ink:#1f2937; --muted:#6b7280; --line:#e5e7eb;
+      --accent:#111827;
+      --radius:16px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+      background:var(--bg); color:var(--ink);
+    }
+    header{padding:22px 18px 8px; text-align:center}
+    h1{margin:0; font-size:1.6rem; letter-spacing:-0.02em}
+    .sub{margin:6px 0 0; color:var(--muted); font-size:0.95rem}
+    .wrap{max-width:1100px; margin:0 auto; padding:14px 14px 40px}
+    .grid{display:grid; grid-template-columns: 1fr; gap:12px}
+    @media (min-width: 980px){ .grid{grid-template-columns: 380px 1fr} }
+    .card{
+      background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+      box-shadow: 0 8px 22px rgba(17,24,39,0.06);
+      padding:14px;
+    }
+    .row{display:flex; gap:10px; flex-wrap:wrap; align-items:end}
+    label{display:block; font-size:0.85rem; color:var(--muted); margin:0 0 6px}
+    select,input{
+      width:100%; padding:10px 10px; border-radius:12px; border:1px solid var(--line);
+      background:#fff; color:var(--ink); font-size:0.95rem;
+    }
+    .field{flex:1 1 160px; min-width:160px}
+    .btn{
+      appearance:none; border:1px solid var(--line); background:var(--accent); color:#fff;
+      padding:10px 12px; border-radius:12px; cursor:pointer; font-weight:650;
+    }
+    .btn:disabled{opacity:0.55; cursor:not-allowed}
+    .hint{font-size:0.86rem; color:var(--muted); margin-top:10px; line-height:1.35}
+    .kpi{
+      display:grid; grid-template-columns: 1fr; gap:10px; margin-top:10px
+    }
+    @media(min-width:560px){ .kpi{grid-template-columns: repeat(3, 1fr)} }
+    .kpi .box{
+      border:1px solid var(--line); border-radius:14px; padding:10px 12px;
+      background: linear-gradient(180deg, #fff, #fbfbfb);
+    }
+    .kpi .t{font-size:0.8rem; color:var(--muted)}
+    .kpi .v{font-size:1.25rem; font-weight:750; margin-top:3px}
+    .kpi .s{font-size:0.8rem; color:var(--muted); margin-top:2px}
+    table{width:100%; border-collapse:collapse; font-size:0.92rem}
+    th,td{padding:10px 10px; border-bottom:1px solid var(--line); text-align:right; white-space:nowrap}
+    th:first-child, td:first-child{text-align:left}
+    thead th{font-size:0.78rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted)}
+    .small{font-size:0.83rem; color:var(--muted)}
+    .pill{
+      display:inline-block; padding:4px 8px; border:1px solid var(--line); border-radius:999px;
+      font-size:0.78rem; color:var(--muted);
+    }
+    .err{color:#b91c1c; font-weight:650}
+    .ok{color:#065f46; font-weight:650}
+    .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Partnership Matchup Ratings</h1>
+    <div class="sub">Pick two batters → see bowl-type matchup, z-scores, and weighted overall compatibility.</div>
+  </header>
+
+  <div class="wrap">
+    <div class="grid">
+
+      <div class="card">
+        <div class="row">
+          <div class="field">
+            <label for="batA">Batter A</label>
+            <select id="batA"></select>
+          </div>
+          <div class="field">
+            <label for="batB">Batter B</label>
+            <select id="batB"></select>
+          </div>
+        </div>
+
+        <div class="row" style="margin-top:10px;">
+          <div class="field" style="max-width:190px;">
+            <label for="alpha">alpha (blend strength)</label>
+            <input id="alpha" type="number" min="0" max="1" step="0.01" value="0.67" />
+          </div>
+          <div class="field" style="max-width:220px;">
+            <label for="weightPreset">Bowling weights preset</label>
+            <select id="weightPreset">
+              <option value="default">Default (from weights.json)</option>
+              <option value="equal">Equal weights</option>
+            </select>
+          </div>
+          <div class="field" style="max-width:190px;">
+            <button id="calcBtn" class="btn" style="width:100%;">Calculate</button>
+          </div>
+        </div>
+
+        <div id="status" class="hint"></div>
+
+        <div class="kpi" id="kpi" style="display:none;">
+          <div class="box">
+            <div class="t">Weighted Total (raw)</div>
+            <div class="v" id="k_total_raw">—</div>
+            <div class="s small">Σ weight × (run_pair + wicket_pair)</div>
+          </div>
+          <div class="box">
+            <div class="t">Weighted Run (raw)</div>
+            <div class="v" id="k_run_raw">—</div>
+            <div class="s small">Σ weight × run_pair</div>
+          </div>
+          <div class="box">
+            <div class="t">Weighted Wicket (raw)</div>
+            <div class="v" id="k_wk_raw">—</div>
+            <div class="s small">Σ weight × wicket_pair</div>
+          </div>
+
+          <div class="box">
+            <div class="t">Weighted Total (z)</div>
+            <div class="v" id="k_total_z">—</div>
+            <div class="s small">Σ weight × total_z</div>
+          </div>
+          <div class="box">
+            <div class="t">Weighted Run (z)</div>
+            <div class="v" id="k_run_z">—</div>
+            <div class="s small">Σ weight × run_z</div>
+          </div>
+          <div class="box">
+            <div class="t">Weighted Wicket (z)</div>
+            <div class="v" id="k_wk_z">—</div>
+            <div class="s small">Σ weight × wicket_z</div>
+          </div>
+        </div>
+
+        <div class="hint">
+          <div class="pill mono">run_pair = α·max(A_run,B_run) + (1-α)·min(A_run,B_run)</div>
+          <div style="height:6px"></div>
+          <div class="pill mono">wicket_pair = α·min(A_wk,B_wk) + (1-α)·max(A_wk,B_wk)</div>
+          <div style="height:6px"></div>
+          <div class="small">Notes: wicket values are "wicket_run_impact" (lower is better; pairing rewards the *better* wicket profile). Z-scores are computed vs the baseline distribution in <span class="mono">data/baseline.json</span>.</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div style="display:flex; justify-content:space-between; align-items:baseline; gap:10px; flex-wrap:wrap;">
+          <div>
+            <div class="small">By bowl type</div>
+            <div class="mono" id="pairTitle" style="font-weight:800; font-size:1.05rem; margin-top:4px;">—</div>
+          </div>
+          <div class="small" id="metaRight"></div>
+        </div>
+
+        <div style="overflow:auto; margin-top:8px;">
+          <table id="tbl">
+            <thead>
+              <tr>
+                <th>Bowl</th>
+                <th>A_run</th>
+                <th>B_run</th>
+                <th>A_wk</th>
+                <th>B_wk</th>
+                <th>run_pair</th>
+                <th>wk_pair</th>
+                <th>total_pair</th>
+                <th>run_z</th>
+                <th>wk_z</th>
+                <th>total_z</th>
+                <th>weight</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+
+        <div class="hint small" style="margin-top:10px;">
+          If you see blanks, it usually means the selected batter isn't present in the pivot files.
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+<script>
+/**
+ * Expected data files:
+ *  - data/run_pivot.json    { "bats":[...], "bowl_types":[...], "values": { "<bat>": { "<bt>": number, ... }, ... } }
+ *  - data/wicket_pivot.json same shape
+ *  - data/balls_pivot.json  same shape (optional: for display only)
+ *  - data/baseline.json     { "<bt>": { run_mean, run_std, wk_mean, wk_std, total_mean, total_std }, ... }
+ *  - data/weights.json      { "<bt>": weight, ... }
+ */
+
+let RUN=null, WK=null, BALLS=null, BASE=null, WEIGHTS=null;
+
+const $ = (id)=>document.getElementById(id);
+
+function fmt(x, d=3){
+  if(x===null || x===undefined || Number.isNaN(x)) return "—";
+  const n = Number(x);
+  if(!Number.isFinite(n)) return "—";
+  return n.toFixed(d);
+}
+
+async function loadJSON(url){
+  const res = await fetch(url, {cache:"no-store"});
+  if(!res.ok) throw new Error(`Failed to load ${url} (${res.status})`);
+  return await res.json();
+}
+
+function setStatus(msg, kind=""){
+  const el=$("status");
+  el.innerHTML = kind ? `<span class="${kind}">${msg}</span>` : msg;
+}
+
+function getWeights(preset, bowlTypes){
+  if(preset==="equal"){
+    const w = {};
+    const val = 1.0 / bowlTypes.length;
+    bowlTypes.forEach(bt => w[bt]=val);
+    return w;
+  }
+  // default
+  return WEIGHTS || {};
+}
+
+function partnershipRow(batA, batB, bt, alpha){
+  const A_run = RUN?.values?.[batA]?.[bt] ?? 0;
+  const B_run = RUN?.values?.[batB]?.[bt] ?? 0;
+  const A_wk  = WK?.values?.[batA]?.[bt] ?? 0;
+  const B_wk  = WK?.values?.[batB]?.[bt] ?? 0;
+
+  const run_pair = alpha * Math.max(A_run, B_run) + (1-alpha) * Math.min(A_run, B_run);
+  const wk_pair  = alpha * Math.min(A_wk, B_wk)  + (1-alpha) * Math.max(A_wk, B_wk);
+  const total_pair = run_pair + wk_pair;
+
+  const b = BASE?.[bt] || null;
+  const run_z   = b ? (run_pair   - b.run_mean)   / (b.run_std   || 1) : NaN;
+  const wk_z    = b ? (wk_pair    - b.wk_mean)    / (b.wk_std    || 1) : NaN;
+  const total_z = b ? (total_pair - b.total_mean) / (b.total_std || 1) : NaN;
+
+  return { bt, A_run, B_run, A_wk, B_wk, run_pair, wk_pair, total_pair, run_z, wk_z, total_z };
+}
+
+function renderTable(rows, weights){
+  const tb = $("tbl").querySelector("tbody");
+  tb.innerHTML = "";
+  rows.forEach(r=>{
+    const w = weights[r.bt] ?? 0;
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td class="mono">${r.bt}</td>
+      <td>${fmt(r.A_run)}</td>
+      <td>${fmt(r.B_run)}</td>
+      <td>${fmt(r.A_wk)}</td>
+      <td>${fmt(r.B_wk)}</td>
+      <td>${fmt(r.run_pair)}</td>
+      <td>${fmt(r.wk_pair)}</td>
+      <td>${fmt(r.total_pair)}</td>
+      <td>${fmt(r.run_z)}</td>
+      <td>${fmt(r.wk_z)}</td>
+      <td>${fmt(r.total_z)}</td>
+      <td>${fmt(w, 3)}</td>
+    `;
+    tb.appendChild(tr);
+  });
+}
+
+function computeWeighted(rows, weights){
+  let total_raw=0, run_raw=0, wk_raw=0;
+  let total_z=0, run_z=0, wk_z=0;
+
+  rows.forEach(r=>{
+    const w = weights[r.bt] ?? 0;
+    total_raw += w * r.total_pair;
+    run_raw   += w * r.run_pair;
+    wk_raw    += w * r.wk_pair;
+
+    total_z += w * r.total_z;
+    run_z   += w * r.run_z;
+    wk_z    += w * r.wk_z;
+  });
+
+  return { total_raw, run_raw, wk_raw, total_z, run_z, wk_z };
+}
+
+function renderKPIs(k){
+  $("k_total_raw").textContent = fmt(k.total_raw, 3);
+  $("k_run_raw").textContent   = fmt(k.run_raw, 3);
+  $("k_wk_raw").textContent    = fmt(k.wk_raw, 3);
+
+  $("k_total_z").textContent = fmt(k.total_z, 2);
+  $("k_run_z").textContent   = fmt(k.run_z, 2);
+  $("k_wk_z").textContent    = fmt(k.wk_z, 2);
+
+  $("kpi").style.display = "grid";
+}
+
+function populateDropdowns(bats){
+  const a=$("batA"), b=$("batB");
+  a.innerHTML=""; b.innerHTML="";
+  bats.forEach(name=>{
+    const oa=document.createElement("option");
+    oa.value=name; oa.textContent=name;
+    const ob=oa.cloneNode(true);
+    a.appendChild(oa); b.appendChild(ob);
+  });
+
+  // pick two different defaults
+  if(bats.length>=2){
+    a.value=bats[0];
+    b.value=bats[1];
+  }
+}
+
+function calc(){
+  const batA=$("batA").value;
+  const batB=$("batB").value;
+  const alpha = Math.min(1, Math.max(0, Number($("alpha").value || 0.67)));
+  $("alpha").value = alpha.toFixed(2);
+
+  const bowlTypes = RUN?.bowl_types || [];
+  const weights = getWeights($("weightPreset").value, bowlTypes);
+
+  const rows = bowlTypes.map(bt => partnershipRow(batA, batB, bt, alpha));
+  renderTable(rows, weights);
+
+  const k = computeWeighted(rows, weights);
+  renderKPIs(k);
+
+  $("pairTitle").textContent = `${batA} + ${batB}`;
+  const hasBalls = BALLS && BALLS.values && BALLS.values[batA] && BALLS.values[batB];
+  $("metaRight").textContent = hasBalls ? "Includes A/B sample sizes in balls_pivot.json (optional)." : "balls_pivot.json not loaded (optional).";
+  setStatus("Calculated.", "ok");
+}
+
+async function init(){
+  try{
+    setStatus("Loading data…");
+    // These are small fetches; keep separate for clearer errors.
+    RUN = await loadJSON("data/run_pivot.json");
+    WK  = await loadJSON("data/wicket_pivot.json");
+    try{ BALLS = await loadJSON("data/balls_pivot.json"); }catch(e){ BALLS=null; }
+    BASE = await loadJSON("data/baseline.json");
+    WEIGHTS = await loadJSON("data/weights.json");
+
+    if(!RUN?.bats?.length) throw new Error("run_pivot.json missing bats[]");
+    if(!RUN?.bowl_types?.length) throw new Error("run_pivot.json missing bowl_types[]");
+
+    populateDropdowns(RUN.bats);
+    $("calcBtn").addEventListener("click", calc);
+
+    // auto-calc on change
+    ["batA","batB","alpha","weightPreset"].forEach(id=>{
+      $(id).addEventListener("change", ()=>calc());
+    });
+
+    setStatus(`Loaded ${RUN.bats.length} batters · ${RUN.bowl_types.length} bowl types.`, "ok");
+    calc();
+  }catch(err){
+    console.error(err);
+    setStatus(`Error: ${err.message}. Check your /data/*.json files.`, "err");
+    $("calcBtn").disabled = true;
+  }
+}
+
+init();
+</script>
+</body>
+</html>
