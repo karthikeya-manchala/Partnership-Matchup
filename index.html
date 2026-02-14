@@ -11,7 +11,7 @@
       --ink:#111827;
       --muted:#6b7280;
       --line:#e5e7eb;
-      --shadow: 0 10px 30px rgba(17,24,39,0.08);
+      --shadow: 0 10px 30px rgba(17,24,39,0.10);
       --radius:18px;
     }
     *{box-sizing:border-box}
@@ -21,7 +21,7 @@
     .sub{margin:6px 0 0; color:var(--muted); font-size:0.95rem;}
     .wrap{max-width:1200px; margin:0 auto; padding:12px 14px 42px;}
     .grid{display:grid; grid-template-columns: 1fr; gap:12px;}
-    @media(min-width: 980px){ .grid{grid-template-columns: 420px 1fr;} }
+    @media(min-width: 980px){ .grid{grid-template-columns: 440px 1fr;} }
 
     .card{
       background:var(--card);
@@ -51,27 +51,33 @@
       padding:10px 12px;
       border-radius:12px;
       cursor:pointer;
-      font-weight:700;
+      font-weight:800;
       width:100%;
     }
     .btn.secondary{background:#fff; color:var(--ink);}
     .btn:disabled{opacity:0.55; cursor:not-allowed;}
     .hint{font-size:0.86rem; color:var(--muted); margin-top:10px; line-height:1.35;}
     .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;}
+    .pill{display:inline-block; padding:4px 8px; border:1px solid var(--line); border-radius:999px; font-size:0.78rem; color:var(--muted);}
 
     .sectionTitle{
       display:flex; justify-content:space-between; align-items:baseline; gap:10px; flex-wrap:wrap;
       margin:4px 0 10px;
     }
-    .sectionTitle .k{font-weight:850; letter-spacing:-0.01em}
+    .sectionTitle .k{font-weight:900; letter-spacing:-0.01em}
     .sectionTitle .m{color:var(--muted); font-size:0.85rem}
 
     .tileWrap{display:grid; grid-template-columns: 1fr; gap:10px;}
     @media(min-width: 980px){ .tileWrap{grid-template-columns: 1fr 1fr;} }
 
-    .panel{border:1px solid var(--line); border-radius:16px; padding:12px; background:linear-gradient(180deg,#fff,#fcfcfc);}
+    .panel{
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:12px;
+      background:linear-gradient(180deg,#fff,#fcfcfc);
+    }
     .panelHead{display:flex; justify-content:space-between; align-items:baseline; gap:10px; flex-wrap:wrap; margin-bottom:10px;}
-    .panelHead .name{font-weight:900; font-size:1.02rem;}
+    .panelHead .name{font-weight:950; font-size:1.02rem;}
     .panelHead .meta{color:var(--muted); font-size:0.82rem;}
 
     .tiles{
@@ -80,47 +86,85 @@
       grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
     }
 
+    /* more apparent color */
     .tile{
-      border:1px solid var(--line);
+      border:1px solid rgba(17,24,39,0.10);
       border-radius:16px;
       padding:10px 10px;
-      background:#fff;
       position:relative;
       overflow:hidden;
-      min-height:92px;
+      min-height:88px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.85), rgba(255,255,255,0.55));
+      box-shadow: 0 6px 18px rgba(17,24,39,0.06);
     }
     .tile::before{
       content:"";
       position:absolute; inset:0;
-      opacity:0.22;
       background: var(--heat, #ffffff);
+      opacity: 0.88; /* strong */
+    }
+    .tile::after{
+      content:"";
+      position:absolute; inset:0;
+      background: radial-gradient(120px 80px at 20% 10%, rgba(255,255,255,0.55), rgba(255,255,255,0));
+      opacity:0.9;
+      pointer-events:none;
     }
     .tile .top{
       position:relative;
       display:flex; justify-content:space-between; align-items:baseline; gap:10px;
       margin-bottom:6px;
     }
-    .tile .bt{font-weight:850;}
-    .tile .metric{font-size:0.78rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.08em;}
-    .tile .val{position:relative; font-size:1.15rem; font-weight:900; letter-spacing:-0.01em;}
-    .tile .z{position:relative; color:var(--muted); font-size:0.82rem; margin-top:2px;}
-    .tile .z b{color:var(--ink);}
+    .tile .bt{font-weight:950;}
+    .tile .tag{
+      font-size:0.78rem;
+      padding:3px 7px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,0.55);
+      background: rgba(255,255,255,0.25);
+      color: rgba(17,24,39,0.85);
+    }
+    .tile .val{
+      position:relative;
+      font-size:2.0rem;
+      font-weight:1000;
+      letter-spacing:-0.03em;
+      line-height:1.0;
+      color: rgba(17,24,39,0.95);
+      text-shadow: 0 1px 0 rgba(255,255,255,0.25);
+    }
+    .tile .sub{
+      position:relative;
+      margin-top:4px;
+      color: rgba(17,24,39,0.70);
+      font-size:0.85rem;
+      letter-spacing:0.01em;
+    }
 
     .kpis{
       display:grid; gap:10px;
       grid-template-columns: 1fr;
       margin-top:10px;
     }
-    @media(min-width: 560px){ .kpis{grid-template-columns: repeat(4,1fr);} }
+    @media(min-width: 560px){ .kpis{grid-template-columns: 1fr 1fr;} }
     .kpi{
       border:1px solid var(--line);
       border-radius:16px;
-      padding:10px 12px;
-      background:linear-gradient(180deg,#fff,#fbfbfb);
+      padding:12px 12px;
+      position:relative;
+      overflow:hidden;
+      box-shadow: 0 8px 22px rgba(17,24,39,0.06);
+      min-height:88px;
     }
-    .kpi .t{font-size:0.78rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.08em;}
-    .kpi .v{font-size:1.3rem; font-weight:900; margin-top:4px;}
-    .kpi .s{font-size:0.82rem; color:var(--muted); margin-top:3px;}
+    .kpi::before{
+      content:"";
+      position:absolute; inset:0;
+      background: var(--heat, #ffffff);
+      opacity: 0.88;
+    }
+    .kpi .t{position:relative; font-size:0.78rem; color: rgba(17,24,39,0.70); text-transform:uppercase; letter-spacing:0.10em;}
+    .kpi .v{position:relative; font-size:2.2rem; font-weight:1000; margin-top:6px; letter-spacing:-0.03em;}
+    .kpi .s{position:relative; font-size:0.85rem; color: rgba(17,24,39,0.70); margin-top:4px;}
 
     .weights{
       border:1px solid var(--line);
@@ -133,24 +177,17 @@
     .weights th:first-child,.weights td:first-child{text-align:left;}
     .weights thead th{font-size:0.78rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); background:#fafafa;}
     .weights input{padding:8px 8px; border-radius:10px;}
-    .pill{display:inline-block; padding:4px 8px; border:1px solid var(--line); border-radius:999px; font-size:0.78rem; color:var(--muted);}
-    .err{color:#b91c1c; font-weight:750;}
-    .ok{color:#065f46; font-weight:750;}
-    .split{height:10px;}
 
-    .legend{
-      display:flex; gap:8px; flex-wrap:wrap; align-items:center;
-      margin-top:10px;
-      color:var(--muted);
-      font-size:0.85rem;
-    }
-    .sw{width:14px; height:14px; border-radius:6px; border:1px solid var(--line); display:inline-block;}
+    .err{color:#b91c1c; font-weight:850;}
+    .ok{color:#065f46; font-weight:850;}
+    .legend{display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-top:10px; color:var(--muted); font-size:0.85rem;}
+    .sw{width:14px; height:14px; border-radius:6px; border:1px solid rgba(17,24,39,0.12); display:inline-block;}
   </style>
 </head>
 <body>
 <header>
   <h1>Partnership Matchup Ratings</h1>
-  <div class="sub">Batter tiles show (run, wicket, total) impacts by bowl type, color-coded by z-score.</div>
+  <div class="sub">Choose a metric → see 1–100 ratings by bowl type for each batter and the partnership.</div>
 </header>
 
 <div class="wrap">
@@ -170,22 +207,29 @@
       </div>
 
       <div class="row" style="margin-top:10px;">
+        <div style="flex:1 1 150px; max-width:220px;">
+          <label for="metric">Metric</label>
+          <select id="metric">
+            <option value="run">Run impact</option>
+            <option value="wicket">Wicket impact</option>
+            <option value="total">Total impact</option>
+          </select>
+        </div>
+
         <div style="flex:1 1 120px; max-width:190px;">
           <label for="alpha">alpha</label>
           <input id="alpha" type="number" min="0" max="1" step="0.01" value="0.67" />
         </div>
+
         <div style="flex:1 1 170px; max-width:260px;">
-          <label for="normalizeWeights">Weights</label>
-          <div class="row" style="gap:8px; align-items:center;">
-            <div style="flex:1 1 auto;">
-              <select id="weightPreset">
-                <option value="default">Load from weights.json</option>
-                <option value="equal">Equal weights</option>
-                <option value="custom">Custom (edit below)</option>
-              </select>
-            </div>
-          </div>
+          <label for="weightPreset">Weights</label>
+          <select id="weightPreset">
+            <option value="default">Load from weights.json</option>
+            <option value="equal">Equal weights</option>
+            <option value="custom">Custom (edit below)</option>
+          </select>
         </div>
+
         <div style="flex:1 1 120px; max-width:190px;">
           <label>&nbsp;</label>
           <button id="calcBtn" class="btn">Recalculate</button>
@@ -218,24 +262,23 @@
 
       <div class="hint">
         <div class="pill mono">run_pair = α·max(A_run,B_run) + (1-α)·min(A_run,B_run)</div>
-        <div class="split"></div>
+        <div style="height:8px"></div>
         <div class="pill mono">wicket_pair = α·min(A_wk,B_wk) + (1-α)·max(A_wk,B_wk)</div>
-        <div class="split"></div>
-        <div>Color logic (goodness): <b>Run</b> uses z directly (higher = better). <b>Wicket</b> and <b>Total</b> are inverted (lower impact = better).</div>
+        <div style="height:8px"></div>
+        <div>All tiles are converted from z-scores → <b>1–100 ratings</b>. For <b>wicket</b> and <b>total</b>, lower impact is better (so the rating direction is flipped internally).</div>
       </div>
 
       <div class="legend">
-        <span class="sw" style="background: linear-gradient(90deg, rgba(220,38,38,0.95), rgba(245,158,11,0.85));"></span>
-        worse
-        <span class="sw" style="background: linear-gradient(90deg, rgba(245,158,11,0.85), rgba(34,197,94,0.95));"></span>
-        better
+        <span class="sw" style="background: rgb(220,38,38); opacity:0.85;"></span> low
+        <span class="sw" style="background: rgb(245,158,11); opacity:0.85;"></span> mid
+        <span class="sw" style="background: rgb(34,197,94); opacity:0.85;"></span> high
       </div>
     </div>
 
     <!-- Tiles + Output -->
     <div class="card">
       <div class="sectionTitle">
-        <div class="k">Tiles</div>
+        <div class="k">Ratings by bowl type</div>
         <div class="m" id="metaRight">—</div>
       </div>
 
@@ -243,7 +286,7 @@
         <div class="panel">
           <div class="panelHead">
             <div class="name" id="nameA">Batter 1</div>
-            <div class="meta small" id="metaA">—</div>
+            <div class="meta" id="metaA">—</div>
           </div>
           <div class="tiles" id="tilesA"></div>
         </div>
@@ -251,7 +294,7 @@
         <div class="panel">
           <div class="panelHead">
             <div class="name" id="nameB">Batter 2</div>
-            <div class="meta small" id="metaB">—</div>
+            <div class="meta" id="metaB">—</div>
           </div>
           <div class="tiles" id="tilesB"></div>
         </div>
@@ -259,42 +302,33 @@
         <div class="panel" style="grid-column: 1 / -1;">
           <div class="panelHead">
             <div class="name" id="nameP">Partnership</div>
-            <div class="meta small" id="metaP">—</div>
+            <div class="meta" id="metaP">—</div>
           </div>
           <div class="tiles" id="tilesP"></div>
         </div>
       </div>
 
       <div class="sectionTitle" style="margin-top:14px;">
-        <div class="k">Overall compatibility</div>
+        <div class="k">Final compatibility</div>
         <div class="m mono" id="pairTitle">—</div>
       </div>
 
-      <div class="kpis" id="kpis">
-        <div class="kpi">
-          <div class="t">Weighted Total (raw)</div>
-          <div class="v" id="k_total_raw">—</div>
-          <div class="s">Σ w × total_pair</div>
+      <div class="kpis">
+        <div class="kpi" id="finalBox" style="--heat: rgb(245,158,11);">
+          <div class="t" id="finalLabel">Final rating (1–100)</div>
+          <div class="v" id="finalRating">—</div>
+          <div class="s" id="finalSub">Weighted average across bowl types</div>
         </div>
-        <div class="kpi">
-          <div class="t">Weighted Run (raw)</div>
-          <div class="v" id="k_run_raw">—</div>
-          <div class="s">Σ w × run_pair</div>
-        </div>
-        <div class="kpi">
-          <div class="t">Weighted Wicket (raw)</div>
-          <div class="v" id="k_wk_raw">—</div>
-          <div class="s">Σ w × wk_pair</div>
-        </div>
-        <div class="kpi">
-          <div class="t">Weighted Total (good-z)</div>
-          <div class="v" id="k_total_gz">—</div>
-          <div class="s">Σ w × goodness_z</div>
+        <div class="kpi" style="--heat: rgba(255,255,255,0.0); border-style:dashed;">
+          <div class="t">How it’s built</div>
+          <div class="s" style="margin-top:8px; line-height:1.35;">
+            For each bowl type: compute z-score vs baseline → convert to percentile → map to 1–100. Then take weighted average using your weights.
+          </div>
         </div>
       </div>
 
-      <div class="hint small" style="margin-top:10px;">
-        If you see “—” tiles, it means that batter/bowl-type value is missing in the pivot JSON and is treated as 0.
+      <div class="hint" style="margin-top:10px;">
+        If a batter/bowl-type is missing from the JSON pivots, it’s treated as 0.
       </div>
     </div>
 
@@ -303,7 +337,7 @@
 
 <script>
 /**
- * JSON files are expected in the SAME folder as index.html (repo root):
+ * JSON files expected in the SAME folder as index.html (repo root):
  *  - run_pivot.json
  *  - wicket_pivot.json
  *  - balls_pivot.json (optional)
@@ -316,6 +350,7 @@ let customWeights = null;
 
 const $ = (id)=>document.getElementById(id);
 
+function clamp(v, lo, hi){ return Math.min(hi, Math.max(lo, v)); }
 function fmt(x, d=3){
   if(x===null || x===undefined || Number.isNaN(x)) return "—";
   const n = Number(x);
@@ -334,37 +369,52 @@ function setStatus(msg, kind=""){
   el.innerHTML = kind ? `<span class="${kind}">${msg}</span>` : msg;
 }
 
-function clamp(v, lo, hi){ return Math.min(hi, Math.max(lo, v)); }
-
+/* --- stats helpers --- */
 function zscore(x, mean, std){
   const s = (std && std!==0) ? std : 1;
   return (x - mean) / s;
 }
 
-// Map a "goodness z" (negative bad, positive good) to a heat color string.
-function heatColor(gz){
-  if(!Number.isFinite(gz)) return "#ffffff";
-  const z = clamp(gz, -2.5, 2.5);
-  // interpolate: red -> amber -> green
+// Normal CDF approximation -> percentile [0..1]
+function normCdf(z){
+  // Abramowitz & Stegun style erf approximation.
+  // Good enough for rating mapping.
+  const sign = z < 0 ? -1 : 1;
+  const x = Math.abs(z) / Math.sqrt(2);
+  const t = 1 / (1 + 0.3275911 * x);
+  const a1=0.254829592, a2=-0.284496736, a3=1.421413741, a4=-1.453152027, a5=1.061405429;
+  const erf = sign * (1 - (((((a5*t + a4)*t + a3)*t + a2)*t + a1)*t) * Math.exp(-x*x));
+  return 0.5 * (1 + erf);
+}
+
+function zToRating(zGood){
+  // clamp extreme z to avoid overly hard saturation
+  const z = clamp(zGood, -3.0, 3.0);
+  const p = normCdf(z); // 0..1
+  const r = Math.round(1 + 99 * p); // 1..100
+  return clamp(r, 1, 100);
+}
+
+/* --- color mapping (more apparent) --- */
+function ratingColor(r){
   const red   = [220, 38, 38];
   const amber = [245,158, 11];
   const green = [ 34,197, 94];
 
   function lerp(a,b,t){ return a + (b-a)*t; }
   function mix(c1,c2,t){
-    const r = Math.round(lerp(c1[0],c2[0],t));
-    const g = Math.round(lerp(c1[1],c2[1],t));
-    const b = Math.round(lerp(c1[2],c2[2],t));
-    return `rgb(${r},${g},${b})`;
+    const rr = Math.round(lerp(c1[0],c2[0],t));
+    const gg = Math.round(lerp(c1[1],c2[1],t));
+    const bb = Math.round(lerp(c1[2],c2[2],t));
+    return `rgb(${rr},${gg},${bb})`;
   }
 
-  if(z < 0){
-    const t = (z + 2.5) / 2.5; // -2.5->0, 0->1
-    return mix(red, amber, t);
-  } else {
-    const t = z / 2.5; // 0->0, 2.5->1
-    return mix(amber, green, t);
+  // 1..100 -> red -> amber -> green
+  const x = clamp((r - 1) / 99, 0, 1);
+  if(x < 0.5){
+    return mix(red, amber, x / 0.5);
   }
+  return mix(amber, green, (x - 0.5) / 0.5);
 }
 
 function getVal(pivot, bat, bt){
@@ -418,112 +468,115 @@ function currentWeights(bowlTypes){
   return { w, sum };
 }
 
-function buildTile(bt, metricName, value, z, goodnessZ){
+/* --- rating computation per entity --- */
+function computeBatterMetricZ(bat, bt, metric){
+  const run = getVal(RUN, bat, bt);
+  const wk  = getVal(WK,  bat, bt);
+  const tot = run + wk;
+
+  const b = BASE?.[bt] || null;
+  if(!b) return NaN;
+
+  if(metric === "run")   return zscore(run, b.run_mean, b.run_std);
+  if(metric === "wicket")return zscore(wk,  b.wk_mean,  b.wk_std);
+  return zscore(tot, b.total_mean, b.total_std); // total
+}
+
+function computePartnershipMetricZ(batA, batB, bt, metric, alpha){
+  const A_run = getVal(RUN, batA, bt);
+  const B_run = getVal(RUN, batB, bt);
+  const A_wk  = getVal(WK,  batA, bt);
+  const B_wk  = getVal(WK,  batB, bt);
+
+  const run_pair = alpha * Math.max(A_run, B_run) + (1-alpha) * Math.min(A_run, B_run);
+  const wk_pair  = alpha * Math.min(A_wk, B_wk)  + (1-alpha) * Math.max(A_wk, B_wk);
+  const tot_pair = run_pair + wk_pair;
+
+  const b = BASE?.[bt] || null;
+  if(!b) return NaN;
+
+  if(metric === "run")   return zscore(run_pair, b.run_mean, b.run_std);
+  if(metric === "wicket")return zscore(wk_pair,  b.wk_mean,  b.wk_std);
+  return zscore(tot_pair, b.total_mean, b.total_std);
+}
+
+// For wicket/total, lower impact is better => flip direction for rating.
+// We never show "good-z", just use it internally to produce a 1-100 rating.
+function zToMetricRating(z, metric){
+  if(!Number.isFinite(z)) return null;
+  const zGood = (metric === "run") ? z : -z;
+  return zToRating(zGood);
+}
+
+function buildTile(bt, metricLabel, rating){
   const div = document.createElement("div");
   div.className = "tile";
-  div.style.setProperty("--heat", heatColor(goodnessZ));
+  const col = rating === null ? "rgb(229,231,235)" : ratingColor(rating);
+  div.style.setProperty("--heat", col);
+
   div.innerHTML = `
     <div class="top">
       <div class="bt mono">${bt}</div>
-      <div class="metric">${metricName}</div>
+      <div class="tag">${metricLabel}</div>
     </div>
-    <div class="val">${fmt(value, 3)}</div>
-    <div class="z mono">z: <b>${fmt(z, 2)}</b> · good-z: <b>${fmt(goodnessZ, 2)}</b></div>
+    <div class="val">${rating === null ? "—" : rating}</div>
+    <div class="sub">1–100 rating</div>
   `;
   return div;
 }
 
-function renderBatterTiles(containerId, batName){
+function renderBatterTiles(containerId, batName, metric){
   const bowlTypes = RUN.bowl_types;
   const el = $(containerId);
   el.innerHTML = "";
 
+  const label = (metric === "run") ? "RUN" : (metric === "wicket") ? "WICKET" : "TOTAL";
+
   bowlTypes.forEach(bt=>{
-    const run = getVal(RUN, batName, bt);
-    const wk  = getVal(WK,  batName, bt);
-    const tot = run + wk;
-
-    const b = BASE?.[bt] || null;
-
-    const run_z = b ? zscore(run, b.run_mean, b.run_std) : NaN;
-    const wk_z  = b ? zscore(wk,  b.wk_mean,  b.wk_std)  : NaN;
-    const tot_z = b ? zscore(tot, b.total_mean, b.total_std) : NaN;
-
-    // goodness: run higher better; wicket & total lower better => invert
-    const run_gz = run_z;
-    const wk_gz  = -wk_z;
-    const tot_gz = -tot_z;
-
-    el.appendChild(buildTile(bt, "Run", run, run_z, run_gz));
-    el.appendChild(buildTile(bt, "Wicket", wk, wk_z, wk_gz));
-    el.appendChild(buildTile(bt, "Total", tot, tot_z, tot_gz));
+    const z = computeBatterMetricZ(batName, bt, metric);
+    const r = zToMetricRating(z, metric);
+    el.appendChild(buildTile(bt, label, r));
   });
 }
 
-function renderPartnershipTiles(containerId, batA, batB, alpha){
+function renderPartnershipTiles(containerId, batA, batB, metric, alpha){
   const bowlTypes = RUN.bowl_types;
   const el = $(containerId);
   el.innerHTML = "";
 
+  const label = (metric === "run") ? "RUN" : (metric === "wicket") ? "WICKET" : "TOTAL";
+
   bowlTypes.forEach(bt=>{
-    const A_run = getVal(RUN, batA, bt);
-    const B_run = getVal(RUN, batB, bt);
-    const A_wk  = getVal(WK,  batA, bt);
-    const B_wk  = getVal(WK,  batB, bt);
-
-    const run_pair = alpha * Math.max(A_run, B_run) + (1-alpha) * Math.min(A_run, B_run);
-    const wk_pair  = alpha * Math.min(A_wk, B_wk)  + (1-alpha) * Math.max(A_wk, B_wk);
-    const tot_pair = run_pair + wk_pair;
-
-    const b = BASE?.[bt] || null;
-    const run_z = b ? zscore(run_pair, b.run_mean, b.run_std) : NaN;
-    const wk_z  = b ? zscore(wk_pair,  b.wk_mean,  b.wk_std)  : NaN;
-    const tot_z = b ? zscore(tot_pair, b.total_mean, b.total_std) : NaN;
-
-    const run_gz = run_z;
-    const wk_gz  = -wk_z;
-    const tot_gz = -tot_z;
-
-    el.appendChild(buildTile(bt, "Run", run_pair, run_z, run_gz));
-    el.appendChild(buildTile(bt, "Wicket", wk_pair, wk_z, wk_gz));
-    el.appendChild(buildTile(bt, "Total", tot_pair, tot_z, tot_gz));
+    const z = computePartnershipMetricZ(batA, batB, bt, metric, alpha);
+    const r = zToMetricRating(z, metric);
+    el.appendChild(buildTile(bt, label, r));
   });
 }
 
-function computeOverall(batA, batB, alpha, weights){
+function computeFinalRating(batA, batB, metric, alpha, weights){
   const bowlTypes = RUN.bowl_types;
-  let w_total_raw=0, w_run_raw=0, w_wk_raw=0, w_good_z=0;
+  let totalW = 0;
+  let sum = 0;
 
   bowlTypes.forEach(bt=>{
-    const A_run = getVal(RUN, batA, bt);
-    const B_run = getVal(RUN, batB, bt);
-    const A_wk  = getVal(WK,  batA, bt);
-    const B_wk  = getVal(WK,  batB, bt);
-
-    const run_pair = alpha * Math.max(A_run, B_run) + (1-alpha) * Math.min(A_run, B_run);
-    const wk_pair  = alpha * Math.min(A_wk, B_wk)  + (1-alpha) * Math.max(A_wk, B_wk);
-    const tot_pair = run_pair + wk_pair;
-
-    const b = BASE?.[bt] || null;
-    const tot_z = b ? zscore(tot_pair, b.total_mean, b.total_std) : NaN;
-    const good_z = -tot_z; // total lower better
-
-    const w = weights[bt] ?? 0;
-    w_total_raw += w * tot_pair;
-    w_run_raw   += w * run_pair;
-    w_wk_raw    += w * wk_pair;
-    w_good_z    += w * good_z;
+    const z = computePartnershipMetricZ(batA, batB, bt, metric, alpha);
+    const r = zToMetricRating(z, metric);
+    const w = Number(weights?.[bt] ?? 0);
+    if(r === null || !Number.isFinite(w) || w <= 0) return;
+    sum += w * r;
+    totalW += w;
   });
 
-  return { w_total_raw, w_run_raw, w_wk_raw, w_good_z };
+  if(totalW <= 0) return null;
+  return Math.round(sum / totalW);
 }
 
+/* --- weights editor --- */
 function renderWeightsEditor(bowlTypes){
   const body = $("weightsBody");
   body.innerHTML = "";
 
   if(!customWeights){
-    // try load from localStorage
     try{
       const saved = localStorage.getItem("pm_custom_weights");
       if(saved) customWeights = JSON.parse(saved);
@@ -535,7 +588,6 @@ function renderWeightsEditor(bowlTypes){
     if(customWeights[bt]===undefined){
       customWeights[bt] = Number(FILE_WEIGHTS?.[bt] ?? (1/bowlTypes.length));
     }
-
     const tr = document.createElement("tr");
     tr.innerHTML = `
       <td class="mono">${bt}</td>
@@ -579,9 +631,12 @@ function resetWeightsToFile(){
   calc();
 }
 
+/* --- main calc --- */
 function calc(){
   const batA = $("batA").value;
   const batB = $("batB").value;
+  const metric = $("metric").value;
+
   const alpha = clamp(Number($("alpha").value || 0.67), 0, 1);
   $("alpha").value = alpha.toFixed(2);
 
@@ -591,35 +646,37 @@ function calc(){
   const cw = currentWeights(bowlTypes);
   $("weightSum").textContent = `sum: ${fmt(cw.sum, 3)}`;
 
-  // show custom editor when preset is custom
   if($("weightPreset").value === "custom"){
     renderWeightsEditor(bowlTypes);
   } else {
     $("weightsBox").style.display = "none";
   }
 
-  // Titles
   $("nameA").textContent = batA;
   $("nameB").textContent = batB;
   $("nameP").textContent = `${batA} + ${batB}`;
   $("pairTitle").textContent = `${batA} + ${batB}`;
 
-  // tiles
-  $("metaRight").textContent = BALLS ? "balls_pivot.json loaded (optional)" : "balls_pivot.json not loaded (optional)";
-  $("metaA").textContent = "—";
-  $("metaB").textContent = "—";
-  $("metaP").textContent = `alpha=${alpha.toFixed(2)} · weights=${$("weightPreset").value}`;
+  const metricLabel = (metric === "run") ? "Run impact" : (metric === "wicket") ? "Wicket impact" : "Total impact";
+  $("metaRight").textContent = `${metricLabel} · alpha=${alpha.toFixed(2)} · weights=${$("weightPreset").value}`;
+  $("metaA").textContent = metricLabel;
+  $("metaB").textContent = metricLabel;
+  $("metaP").textContent = metricLabel;
 
-  renderBatterTiles("tilesA", batA);
-  renderBatterTiles("tilesB", batB);
-  renderPartnershipTiles("tilesP", batA, batB, alpha);
+  renderBatterTiles("tilesA", batA, metric);
+  renderBatterTiles("tilesB", batB, metric);
+  renderPartnershipTiles("tilesP", batA, batB, metric, alpha);
 
-  // overall
-  const k = computeOverall(batA, batB, alpha, cw.w);
-  $("k_total_raw").textContent = fmt(k.w_total_raw, 3);
-  $("k_run_raw").textContent   = fmt(k.w_run_raw, 3);
-  $("k_wk_raw").textContent    = fmt(k.w_wk_raw, 3);
-  $("k_total_gz").textContent  = fmt(k.w_good_z, 2);
+  const final = computeFinalRating(batA, batB, metric, alpha, cw.w);
+  const finalEl = $("finalRating");
+  finalEl.textContent = final === null ? "—" : final;
+
+  const finalBox = $("finalBox");
+  finalBox.style.setProperty("--heat", final === null ? "rgb(229,231,235)" : ratingColor(final));
+
+  // label tweak so it's clear it's for the chosen metric
+  $("finalLabel").textContent = `Final rating (1–100) · ${metricLabel}`;
+  $("finalSub").textContent = "Weighted average across bowl types";
 
   setStatus("Calculated.", "ok");
 }
@@ -640,7 +697,6 @@ async function init(){
   try{
     setStatus("Loading data…");
 
-    // ✅ Paths changed: JSON in repo root (same folder as index.html)
     RUN = await loadJSON("run_pivot.json");
     WK  = await loadJSON("wicket_pivot.json");
     try{ BALLS = await loadJSON("balls_pivot.json"); }catch(e){ BALLS=null; }
@@ -653,7 +709,7 @@ async function init(){
     populateDropdowns(RUN.bats);
 
     $("calcBtn").addEventListener("click", calc);
-    ["batA","batB","alpha","weightPreset","normalizeWeights"].forEach(id=>{
+    ["batA","batB","metric","alpha","weightPreset","normalizeWeights"].forEach(id=>{
       $(id).addEventListener("change", ()=>calc());
     });
     $("copyWeights").addEventListener("click", copyWeightsJSON);
@@ -672,10 +728,11 @@ async function init(){
     calc();
   }catch(err){
     console.error(err);
-    setStatus(`Error: ${err.message}. Make sure index.html and the JSON files are in the SAME folder on your server.`, "err");
+    setStatus(`Error: ${err.message}. Make sure index.html + JSON files are in the SAME folder.`, "err");
     $("calcBtn").disabled = true;
   }
 }
+
 init();
 </script>
 </body>
