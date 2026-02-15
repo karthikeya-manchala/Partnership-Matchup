@@ -1,722 +1,854 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>Partnership Matchup Ratings</title>
   <style>
     :root{
       --bg:#f6f3ed;
       --card:#ffffff;
-      --ink:#111827;
+      --text:#17202a;
       --muted:#6b7280;
-      --line:#e5e7eb;
-      --shadow: 0 10px 30px rgba(17,24,39,0.10);
-      --radius:18px;
+      --border:#e5e7eb;
+      --shadow: 0 10px 30px rgba(16,24,40,0.08);
+      --radius: 18px;
     }
     *{box-sizing:border-box}
-    body{margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif; background:var(--bg); color:var(--ink);}
-    header{padding:22px 16px 10px; text-align:center;}
-    h1{margin:0; font-size:1.65rem; letter-spacing:-0.02em;}
-    .sub{margin:6px 0 0; color:var(--muted); font-size:0.95rem;}
-    .wrap{max-width:1200px; margin:0 auto; padding:12px 14px 42px;}
-    .grid{display:grid; grid-template-columns: 1fr; gap:12px;}
-    @media(min-width: 980px){ .grid{grid-template-columns: 460px 1fr;} }
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      background: radial-gradient(1200px 700px at 50% -200px, #ffffff 0%, var(--bg) 70%);
+      color:var(--text);
+    }
+    .wrap{max-width:1200px;margin:24px auto;padding:0 16px;}
+    .header{text-align:center;margin-bottom:16px;}
+    .header h1{margin:0;font-size:30px;letter-spacing:-0.02em}
+    .header .sub{margin-top:6px;color:var(--muted);font-size:14px}
+
+    .layout{
+      display:grid;
+      grid-template-columns: 460px 1fr;
+      gap:16px;
+      align-items:start;
+    }
+    @media (max-width: 1100px){
+      .layout{grid-template-columns:1fr}
+    }
 
     .card{
       background:var(--card);
-      border:1px solid var(--line);
+      border:1px solid var(--border);
       border-radius:var(--radius);
       box-shadow:var(--shadow);
-      padding:14px;
     }
-    .row{display:flex; gap:10px; flex-wrap:wrap; align-items:end;}
-    label{display:block; font-size:0.82rem; color:var(--muted); margin:0 0 6px;}
-    select,input{
-      width:100%;
-      padding:10px 10px;
-      border-radius:12px;
-      border:1px solid var(--line);
-      background:#fff;
-      color:var(--ink);
-      font-size:0.95rem;
-      outline:none;
-    }
-    input[type="number"]{padding-right:8px;}
-    .btn{
-      appearance:none;
-      border:1px solid var(--line);
-      background:#111827;
-      color:#fff;
-      padding:10px 12px;
-      border-radius:12px;
-      cursor:pointer;
-      font-weight:800;
-      width:100%;
-    }
-    .btn.secondary{background:#fff; color:var(--ink);}
-    .btn:disabled{opacity:0.55; cursor:not-allowed;}
-    .hint{font-size:0.86rem; color:var(--muted); margin-top:10px; line-height:1.35;}
-    .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;}
-    .pill{display:inline-block; padding:4px 8px; border:1px solid var(--line); border-radius:999px; font-size:0.78rem; color:var(--muted);}
+    .left{padding:16px;}
+    .right{padding:14px;}
 
     .sectionTitle{
-      display:flex; justify-content:space-between; align-items:baseline; gap:10px; flex-wrap:wrap;
-      margin:4px 0 10px;
+      font-size:12px;
+      letter-spacing:0.08em;
+      text-transform:uppercase;
+      color:var(--muted);
+      margin:14px 0 8px;
     }
-    .sectionTitle .k{font-weight:900; letter-spacing:-0.01em}
-    .sectionTitle .m{color:var(--muted); font-size:0.85rem}
+    .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .row1{display:grid;grid-template-columns:1fr;gap:10px}
+    label{display:block;color:var(--muted);font-size:13px;margin:0 0 6px}
+    input, select{
+      width:100%;
+      padding:10px 12px;
+      border:1px solid var(--border);
+      border-radius:14px;
+      font-size:14px;
+      outline:none;
+      background:#fff;
+    }
+    input:focus, select:focus{box-shadow:0 0 0 3px rgba(59,130,246,0.15);border-color:#cbd5e1}
 
-    .tileWrap{display:grid; grid-template-columns: 1fr; gap:10px;}
-    @media(min-width: 980px){ .tileWrap{grid-template-columns: 1fr 1fr;} }
+    .hint{color:var(--muted);font-size:13px;margin-top:6px}
+    .btn{
+      width:100%;
+      background:#111827;
+      color:#fff;
+      border:none;
+      border-radius:14px;
+      padding:11px 12px;
+      font-weight:650;
+      cursor:pointer;
+    }
+    .btn:active{transform:translateY(1px)}
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      border:1px solid var(--border);
+      border-radius:999px;
+      padding:6px 10px;
+      font-size:12px;
+      color:var(--muted);
+      background:#fff;
+    }
+    .inline{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      margin-top:8px;
+    }
+
+    .calcOk{
+      color:#065f46;
+      font-weight:700;
+      margin-top:10px;
+    }
+
+    table{width:100%;border-collapse:separate;border-spacing:0}
+    th, td{padding:10px 10px;border-top:1px solid var(--border);font-size:13px}
+    th{color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;font-size:11px}
+    tr:first-child th, tr:first-child td{border-top:none}
+    td:last-child{text-align:right}
+    .wInput{
+      width:92px;
+      text-align:right;
+      padding:8px 10px;
+      border-radius:12px;
+    }
+    .actions{display:grid;gap:10px;margin-top:12px}
+    .btn2{
+      width:100%;
+      background:#fff;
+      color:#111827;
+      border:1px solid var(--border);
+      border-radius:14px;
+      padding:10px 12px;
+      font-weight:650;
+      cursor:pointer;
+    }
+
+    /* RIGHT SIDE */
+    .rightTop{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      padding:6px 6px 12px;
+    }
+    .rightTop .title{
+      font-size:18px;
+      font-weight:800;
+      letter-spacing:-0.01em;
+    }
+    .rightTop .meta{
+      color:var(--muted);
+      font-size:13px;
+      text-align:right;
+    }
+
+    .twoCols{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    @media (max-width: 800px){ .twoCols{grid-template-columns:1fr} }
 
     .panel{
-      border:1px solid var(--line);
+      border:1px solid var(--border);
       border-radius:16px;
-      padding:12px;
-      background:linear-gradient(180deg,#fff,#fcfcfc);
+      padding:10px;
+      background:#fff;
     }
-    .panelHead{display:flex; justify-content:space-between; align-items:baseline; gap:10px; flex-wrap:wrap; margin-bottom:10px;}
-    .panelHead .name{font-weight:950; font-size:1.02rem;}
-    .panelHead .meta{color:var(--muted); font-size:0.82rem;}
-
-    .tiles{
-      display:grid;
-      gap:10px;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    .panelHeader{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      padding:4px 4px 10px;
     }
+    .panelHeader .name{font-weight:800}
+    .panelHeader .small{color:var(--muted);font-size:13px}
 
-    /* Stronger heat */
+    .tiles{display:grid;gap:10px}
     .tile{
-      border:1px solid rgba(17,24,39,0.10);
-      border-radius:16px;
-      padding:10px 10px;
       position:relative;
+      border-radius:16px;
+      padding:12px 12px 10px;
       overflow:hidden;
-      min-height:88px;
-      box-shadow: 0 6px 18px rgba(17,24,39,0.06);
-      background: rgba(255,255,255,0.65);
+      min-height:92px;
+      border:1px solid rgba(0,0,0,0.08);
+      box-shadow: 0 1px 0 rgba(0,0,0,0.03);
     }
     .tile::before{
       content:"";
-      position:absolute; inset:0;
-      background: var(--heat, rgba(229,231,235,0.9));
-      opacity: 0.92;
-    }
-    .tile::after{
-      content:"";
-      position:absolute; inset:0;
-      background: radial-gradient(130px 90px at 20% 10%, rgba(255,255,255,0.55), rgba(255,255,255,0));
-      opacity:0.9;
+      position:absolute;
+      inset:-40px -40px auto auto;
+      width:180px;height:180px;
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.45), rgba(255,255,255,0) 60%);
+      transform: rotate(18deg);
       pointer-events:none;
     }
-    .tile .top{
-      position:relative;
-      display:flex; justify-content:space-between; align-items:baseline; gap:10px;
-      margin-bottom:6px;
+    .tileTop{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+    .tileType{
+      font-weight:900;
+      letter-spacing:0.02em;
+      color:rgba(17,24,39,0.75);
     }
-    .tile .bt{font-weight:950;}
-    .tile .tag{
-      font-size:0.78rem;
-      padding:3px 7px;
+    .tileTag{
+      font-size:11px;
+      padding:4px 8px;
       border-radius:999px;
-      border:1px solid rgba(255,255,255,0.55);
+      border:1px solid rgba(17,24,39,0.18);
+      color:rgba(17,24,39,0.8);
       background: rgba(255,255,255,0.25);
-      color: rgba(17,24,39,0.88);
     }
-    .tile .val{
+    .tileVal{
+      margin-top:6px;
+      font-size:34px;
+      font-weight:900;
+      letter-spacing:-0.02em;
+      color:rgba(17,24,39,0.7);
+    }
+    .tileSub{
+      margin-top:2px;
+      font-size:12px;
+      color:rgba(17,24,39,0.65);
+    }
+
+    .pairPanel{margin-top:12px}
+    .pairHeader{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      padding:4px 4px 10px;
+      font-weight:800;
+    }
+    .pairTiles{
+      display:grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap:10px;
+    }
+    @media (max-width: 1000px){ .pairTiles{grid-template-columns: repeat(2, 1fr);} }
+    @media (max-width: 520px){ .pairTiles{grid-template-columns: 1fr;} }
+
+    .finalRow{
+      display:grid;
+      grid-template-columns: 340px 1fr;
+      gap:12px;
+      margin-top:12px;
+      align-items:stretch;
+    }
+    @media (max-width: 900px){ .finalRow{grid-template-columns:1fr} }
+    .finalBox{
+      border-radius:16px;
+      padding:14px;
+      border:1px solid rgba(0,0,0,0.08);
+      box-shadow: 0 1px 0 rgba(0,0,0,0.03);
       position:relative;
-      font-size:2.0rem;
-      font-weight:1000;
+      overflow:hidden;
+      min-height:130px;
+    }
+    .finalBox .kicker{
+      font-size:11px;
+      letter-spacing:0.12em;
+      text-transform:uppercase;
+      color:rgba(17,24,39,0.75);
+      margin-bottom:10px;
+    }
+    .finalBox .big{
+      font-size:46px;
+      font-weight:950;
       letter-spacing:-0.03em;
-      line-height:1.0;
-      color: rgba(17,24,39,0.95);
+      color:rgba(17,24,39,0.72);
+      line-height:1;
     }
-    .tile .sub{
-      position:relative;
-      margin-top:4px;
-      color: rgba(17,24,39,0.72);
-      font-size:0.86rem;
-    }
-
-    .kpis{
-      display:grid; gap:10px;
-      grid-template-columns: 1fr;
+    .finalBox .formula{
       margin-top:10px;
+      color:rgba(17,24,39,0.65);
+      font-size:12px;
     }
-    @media(min-width: 560px){ .kpis{grid-template-columns: 1fr 1fr;} }
-    .kpi{
-      border:1px solid var(--line);
+    .finalBlank{
+      border:1px dashed rgba(0,0,0,0.15);
       border-radius:16px;
-      padding:12px 12px;
-      position:relative;
-      overflow:hidden;
-      box-shadow: 0 8px 22px rgba(17,24,39,0.06);
-      min-height:88px;
       background:#fff;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:var(--muted);
+      font-size:13px;
     }
-    .kpi::before{
-      content:"";
-      position:absolute; inset:0;
-      background: var(--heat, rgba(229,231,235,0.9));
-      opacity: 0.92;
-    }
-    .kpi .t{position:relative; font-size:0.78rem; color: rgba(17,24,39,0.74); text-transform:uppercase; letter-spacing:0.10em;}
-    .kpi .v{position:relative; font-size:2.2rem; font-weight:1000; margin-top:6px; letter-spacing:-0.03em;}
-    .kpi .s{position:relative; font-size:0.85rem; color: rgba(17,24,39,0.72); margin-top:4px;}
 
-    .weights{
-      border:1px solid var(--line);
-      border-radius:16px;
-      overflow:hidden;
-      margin-top:10px;
-    }
-    .weights table{width:100%; border-collapse:collapse; font-size:0.92rem;}
-    .weights th,.weights td{padding:10px 10px; border-bottom:1px solid var(--line); text-align:right;}
-    .weights th:first-child,.weights td:first-child{text-align:left;}
-    .weights thead th{font-size:0.78rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); background:#fafafa;}
-    .weights input{padding:8px 8px; border-radius:10px;}
+    /* Toggle */
+    .checkRow{display:flex;align-items:center;gap:10px;margin-top:10px;color:var(--muted);font-size:13px}
+    .checkRow input{width:auto}
 
-    .err{color:#b91c1c; font-weight:850;}
-    .ok{color:#065f46; font-weight:850;}
-    .legend{display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-top:10px; color:var(--muted); font-size:0.85rem;}
-    .sw{width:14px; height:14px; border-radius:6px; border:1px solid rgba(17,24,39,0.12); display:inline-block;}
-    .small{font-size:0.85rem; color:var(--muted);}
+    .codePills{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+    .miniPill{
+      display:inline-flex;
+      border:1px solid var(--border);
+      background:#fff;
+      border-radius:999px;
+      padding:6px 10px;
+      font-size:12px;
+      color:var(--muted);
+      white-space:nowrap;
+    }
   </style>
 </head>
 <body>
-<header>
-  <h1>Partnership Matchup Ratings</h1>
-  <div class="sub">Choose a metric → see raw z-scores by bowl type (no inversion or direction logic).</div>
-</header>
-
-<div class="wrap">
-  <div class="grid">
-
-    <!-- Controls -->
-    <div class="card">
-      <div class="row">
-        <div style="flex:1 1 200px; min-width:200px;">
-          <label for="searchA">Search Batter 1</label>
-          <input id="searchA" placeholder="Type to filter…" />
-          <div class="small">Dropdown updates as you type.</div>
-          <div style="height:8px"></div>
-          <label for="batA">Batter 1</label>
-          <select id="batA"></select>
-        </div>
-
-        <div style="flex:1 1 200px; min-width:200px;">
-          <label for="searchB">Search Batter 2</label>
-          <input id="searchB" placeholder="Type to filter…" />
-          <div class="small">Dropdown updates as you type.</div>
-          <div style="height:8px"></div>
-          <label for="batB">Batter 2</label>
-          <select id="batB"></select>
-        </div>
-      </div>
-
-      <div class="row" style="margin-top:10px;">
-        <div style="flex:1 1 150px; max-width:240px;">
-          <label for="metric">Metric</label>
-          <select id="metric">
-            <option value="run">Run impact</option>
-            <option value="wicket">Wicket impact</option>
-            <option value="total">Total impact</option>
-          </select>
-        </div>
-
-        <div style="flex:1 1 120px; max-width:190px;">
-          <label for="alpha">alpha</label>
-          <input id="alpha" type="number" min="0" max="1" step="0.01" value="0.67" />
-        </div>
-
-        <div style="flex:1 1 170px; max-width:260px;">
-          <label for="weightPreset">Weights</label>
-          <select id="weightPreset">
-            <option value="default">Load from weights.json</option>
-            <option value="equal">Equal weights</option>
-            <option value="custom">Custom (edit below)</option>
-          </select>
-        </div>
-
-        <div style="flex:1 1 120px; max-width:190px;">
-          <label>&nbsp;</label>
-          <button id="calcBtn" class="btn">Recalculate</button>
-        </div>
-      </div>
-
-      <div class="row" style="margin-top:8px; align-items:center;">
-        <label style="margin:0; display:flex; gap:8px; align-items:center; color:var(--muted); font-size:0.88rem;">
-          <input id="normalizeWeights" type="checkbox" checked />
-          Normalize custom weights to sum = 1
-        </label>
-        <div class="pill mono" id="weightSum">sum: —</div>
-      </div>
-
-      <div id="status" class="hint"></div>
-
-      <div class="weights" id="weightsBox" style="display:none;">
-        <table>
-          <thead>
-            <tr><th>Bowl type</th><th>Weight</th></tr>
-          </thead>
-          <tbody id="weightsBody"></tbody>
-        </table>
-      </div>
-
-      <div class="row" style="margin-top:10px;">
-        <button id="copyWeights" class="btn secondary">Copy weights JSON</button>
-        <button id="resetWeights" class="btn secondary">Reset to file</button>
-      </div>
-
-      <div class="hint">
-        <div class="pill mono">run_pair = α·max(A_run,B_run) + (1-α)·min(A_run,B_run)</div>
-        <div style="height:8px"></div>
-        <div class="pill mono">wicket_pair = α·min(A_wk,B_wk) + (1-α)·max(A_wk,B_wk)</div>
-        <div style="height:8px"></div>
-        <div>Tile colors are based on the <b>raw z-score</b> (higher = greener, lower = redder) for every metric.</div>
-      </div>
-
-      <div class="legend">
-        <span class="sw" style="background: rgb(220,38,38); opacity:0.85;"></span> low z
-        <span class="sw" style="background: rgb(245,158,11); opacity:0.85;"></span> mid
-        <span class="sw" style="background: rgb(34,197,94); opacity:0.85;"></span> high z
-      </div>
+  <div class="wrap">
+    <div class="header">
+      <h1>Partnership Matchup Ratings</h1>
+      <div class="sub">Choose a metric → see scores by bowl type (values loaded from 0–1 pivots and multiplied by 100).</div>
     </div>
 
-    <!-- Tiles + Output -->
-    <div class="card">
-      <div class="sectionTitle">
-        <div class="k">Z-scores by bowl type</div>
-        <div class="m" id="metaRight">—</div>
+    <div class="layout">
+      <!-- LEFT -->
+      <div class="card left">
+        <div class="row2">
+          <div>
+            <label>Search Batter 1</label>
+            <input id="searchA" placeholder="Type to filter Batter 1…" />
+            <div class="hint">Dropdown updates as you type.</div>
+          </div>
+          <div>
+            <label>Search Batter 2</label>
+            <input id="searchB" placeholder="Type to filter Batter 2…" />
+            <div class="hint">Dropdown updates as you type.</div>
+          </div>
+        </div>
+
+        <div class="row2" style="margin-top:10px;">
+          <div>
+            <label>Batter 1</label>
+            <select id="batterA"></select>
+          </div>
+          <div>
+            <label>Batter 2</label>
+            <select id="batterB"></select>
+          </div>
+        </div>
+
+        <div class="row2" style="margin-top:10px;">
+          <div>
+            <label>Metric</label>
+            <select id="metric">
+              <option value="total">Total impact</option>
+              <option value="run">Run impact</option>
+              <option value="wicket">Wicket impact</option>
+            </select>
+          </div>
+          <div>
+            <label>alpha</label>
+            <input id="alpha" type="number" min="0" max="1" step="0.01" value="0.67" />
+          </div>
+        </div>
+
+        <div class="row2" style="margin-top:10px;">
+          <div>
+            <label>Weights</label>
+            <select id="weightMode">
+              <option value="equal">Equal</option>
+              <option value="custom" selected>Custom (edit below)</option>
+            </select>
+          </div>
+          <div style="display:flex;align-items:end">
+            <button class="btn" id="recalc">Recalculate</button>
+          </div>
+        </div>
+
+        <div class="checkRow">
+          <input id="normalize" type="checkbox" checked />
+          <div>Normalize custom weights to sum = 1</div>
+          <div class="pill" id="wSumPill" style="margin-left:auto;">sum: 1.000</div>
+        </div>
+
+        <div class="calcOk" id="calcStatus">Calculated.</div>
+
+        <div class="sectionTitle">Weights table</div>
+        <div class="card" style="box-shadow:none;border-radius:16px;padding:0;overflow:hidden">
+          <table>
+            <thead>
+              <tr>
+                <th style="width:50%">Bowl type</th>
+                <th style="width:50%;text-align:right">Weight</th>
+              </tr>
+            </thead>
+            <tbody id="weightsBody"></tbody>
+          </table>
+        </div>
+
+        <div class="actions">
+          <button class="btn2" id="copyWeights">Copy weights JSON</button>
+          <button class="btn2" id="resetWeights">Reset to file / defaults</button>
+        </div>
+
+        <div class="codePills">
+          <div class="miniPill">run_pair = α·max(A_run,B_run) + (1−α)·min(A_run,B_run)</div>
+          <div class="miniPill">wicket_pair = α·min(A_wk,B_wk) + (1−α)·max(A_wk,B_wk)</div>
+          <div class="miniPill">total_pair = (run_pair + wicket_pair)/2</div>
+        </div>
+
+        <div class="hint" style="margin-top:10px;">
+          Tile colors use <b>red → white → green</b> on the displayed score (0–100; white at 50).
+        </div>
       </div>
 
-      <div class="tileWrap">
-        <div class="panel">
-          <div class="panelHead">
-            <div class="name" id="nameA">Batter 1</div>
-            <div class="meta" id="metaA">—</div>
+      <!-- RIGHT -->
+      <div class="card right">
+        <div class="rightTop">
+          <div class="title">Scores by bowl type</div>
+          <div class="meta" id="metaLine">Total impact · alpha=0.67 · weights=custom</div>
+        </div>
+
+        <div class="twoCols">
+          <div class="panel">
+            <div class="panelHeader">
+              <div class="name" id="nameA">—</div>
+              <div class="small">Total impact</div>
+            </div>
+            <div class="tiles" id="tilesA"></div>
           </div>
-          <div class="tiles" id="tilesA"></div>
-        </div>
 
-        <div class="panel">
-          <div class="panelHead">
-            <div class="name" id="nameB">Batter 2</div>
-            <div class="meta" id="metaB">—</div>
+          <div class="panel">
+            <div class="panelHeader">
+              <div class="name" id="nameB">—</div>
+              <div class="small">Total impact</div>
+            </div>
+            <div class="tiles" id="tilesB"></div>
           </div>
-          <div class="tiles" id="tilesB"></div>
         </div>
 
-        <div class="panel" style="grid-column: 1 / -1;">
-          <div class="panelHead">
-            <div class="name" id="nameP">Partnership</div>
-            <div class="meta" id="metaP">—</div>
+        <div class="panel pairPanel" style="margin-top:12px;">
+          <div class="pairHeader">
+            <div id="pairTitle">—</div>
+            <div style="color:var(--muted);font-size:13px" id="pairMetricLabel">Total impact</div>
           </div>
-          <div class="tiles" id="tilesP"></div>
+          <div class="pairTiles" id="pairTiles"></div>
         </div>
-      </div>
 
-      <div class="sectionTitle" style="margin-top:14px;">
-        <div class="k">Final compatibility</div>
-        <div class="m mono" id="pairTitle">—</div>
-      </div>
-
-      <div class="kpis">
-        <div class="kpi" id="finalBox" style="--heat: rgba(229,231,235,0.9);">
-          <div class="t" id="finalLabel">Final score (weighted z)</div>
-          <div class="v" id="finalScore">—</div>
-          <div class="s" id="finalSub">Σ w × z / Σ w</div>
-        </div>
-        <div class="kpi" style="--heat: rgba(255,255,255,0.0); border-style:dashed;">
+        <div class="finalRow">
+          <div class="finalBox" id="finalBox">
+            <div class="kicker" id="finalKicker">FINAL SCORE (WEIGHTED) · TOTAL IMPACT</div>
+            <div class="big" id="finalScore">—</div>
+            <div class="formula" id="finalFormula">Σ w×score / Σ w</div>
+          </div>
+          <div class="finalBlank" id="finalBlank">Andre Fletcher + Jos Buttler</div>
         </div>
       </div>
     </div>
-
   </div>
-</div>
 
 <script>
-/**
- * JSON files expected in the SAME folder as index.html:
- *  - run_pivot.json
- *  - wicket_pivot.json
- *  - balls_pivot.json (optional)
- *  - baseline.json
- *  - weights.json
- */
-let RUN=null, WK=null, BASE=null, FILE_WEIGHTS=null;
-let customWeights = null;
-let ALL_BATS = [];
+  // -----------------------
+  // FILES (0–1 values)
+  // -----------------------
+  const RUN_URL = "run_pivot.json";
+  const WICKET_URL = "wicket_pivot.json";
 
-const $ = (id)=>document.getElementById(id);
+  // -----------------------
+  // STATE
+  // -----------------------
+  let runData = null;     // { bats:[], bowl_types:[], values:{batter:{type:val0to1}} }
+  let wicketData = null;  // same
+  let bats = [];
+  let bowlTypes = [];
+  let weights = {};       // { type: weight }
+  let defaultWeights = {}; // for reset
 
-function clamp(v, lo, hi){ return Math.min(hi, Math.max(lo, v)); }
-function fmt(x, d=2){
-  if(x===null || x===undefined || Number.isNaN(x)) return "—";
-  const n = Number(x);
-  if(!Number.isFinite(n)) return "—";
-  return n.toFixed(d);
-}
-async function loadJSON(url){
-  const res = await fetch(url, {cache:"no-store"});
-  if(!res.ok) throw new Error(`Failed to load ${url} (${res.status})`);
-  return await res.json();
-}
-function setStatus(msg, kind=""){
-  const el=$("status");
-  el.innerHTML = kind ? `<span class="${kind}">${msg}</span>` : msg;
-}
-function zscore(x, mean, std){
-  const s = (std && std!==0) ? std : 1;
-  return (x - mean) / s;
-}
+  // -----------------------
+  // DOM
+  // -----------------------
+  const elSearchA = document.getElementById("searchA");
+  const elSearchB = document.getElementById("searchB");
+  const elA = document.getElementById("batterA");
+  const elB = document.getElementById("batterB");
+  const elMetric = document.getElementById("metric");
+  const elAlpha = document.getElementById("alpha");
+  const elWeightMode = document.getElementById("weightMode");
+  const elNormalize = document.getElementById("normalize");
+  const elWSumPill = document.getElementById("wSumPill");
+  const elWeightsBody = document.getElementById("weightsBody");
+  const elMetaLine = document.getElementById("metaLine");
 
-/* raw z -> heat (higher = greener) */
-function heatFromZ(z){
-  if(!Number.isFinite(z)) return "rgba(229,231,235,0.9)";
-  const x = clamp(z, -2.5, 2.5);
+  const elNameA = document.getElementById("nameA");
+  const elNameB = document.getElementById("nameB");
+  const tilesA = document.getElementById("tilesA");
+  const tilesB = document.getElementById("tilesB");
+  const pairTiles = document.getElementById("pairTiles");
 
-  const red   = [220, 38, 38];
-  const amber = [245,158, 11];
-  const green = [ 34,197, 94];
+  const elPairTitle = document.getElementById("pairTitle");
+  const elPairMetricLabel = document.getElementById("pairMetricLabel");
 
-  function lerp(a,b,t){ return a + (b-a)*t; }
-  function mix(c1,c2,t){
-    const rr = Math.round(lerp(c1[0],c2[0],t));
-    const gg = Math.round(lerp(c1[1],c2[1],t));
-    const bb = Math.round(lerp(c1[2],c2[2],t));
-    return `rgb(${rr},${gg},${bb})`;
-  }
+  const elFinalBox = document.getElementById("finalBox");
+  const elFinalScore = document.getElementById("finalScore");
+  const elFinalKicker = document.getElementById("finalKicker");
+  const elFinalBlank = document.getElementById("finalBlank");
 
-  if(x < 0){
-    const t = (x + 2.5) / 2.5; // -2.5->0, 0->1
-    return mix(red, amber, t);
-  } else {
-    const t = x / 2.5; // 0->0, 2.5->1
-    return mix(amber, green, t);
-  }
-}
+  const elCalcStatus = document.getElementById("calcStatus");
 
-function getVal(pivot, bat, bt){
-  const v = pivot?.values?.[bat]?.[bt];
-  return (v===null || v===undefined || Number.isNaN(v)) ? 0 : Number(v);
-}
+  document.getElementById("recalc").addEventListener("click", recalcAll);
+  document.getElementById("copyWeights").addEventListener("click", copyWeightsJSON);
+  document.getElementById("resetWeights").addEventListener("click", resetWeights);
 
-function normalizeWeights(w, bowlTypes){
-  const out = {};
-  let sum = 0;
-  bowlTypes.forEach(bt=>{
-    const val = Number(w?.[bt] ?? 0);
-    out[bt] = Number.isFinite(val) ? val : 0;
-    sum += out[bt];
+  elMetric.addEventListener("change", recalcAll);
+  elAlpha.addEventListener("input", () => {
+    elMetaLine.textContent = `${metricLabel()} · alpha=${fmtAlpha()} · weights=${weightsLabel()}`;
   });
-  if(sum <= 0) return { w: out, sum: 0 };
-  bowlTypes.forEach(bt => out[bt] = out[bt] / sum);
-  return { w: out, sum: 1 };
-}
+  elAlpha.addEventListener("change", recalcAll);
 
-function currentWeights(bowlTypes){
-  const preset = $("weightPreset").value;
-  if(preset === "equal"){
-    const val = 1.0 / bowlTypes.length;
-    const w = {}; bowlTypes.forEach(bt => w[bt]=val);
-    return { w, sum: 1 };
-  }
-  if(preset === "custom"){
-    const w0 = customWeights || {};
-    if($("normalizeWeights").checked){
-      return normalizeWeights(w0, bowlTypes);
+  elWeightMode.addEventListener("change", () => {
+    if (elWeightMode.value === "equal") {
+      setEqualWeights();
     }
+    recalcAll();
+  });
+  elNormalize.addEventListener("change", () => {
+    if (elNormalize.checked) normalizeWeights();
+    renderWeightsTable();
+    recalcAll();
+  });
+
+  elA.addEventListener("change", recalcAll);
+  elB.addEventListener("change", recalcAll);
+
+  elSearchA.addEventListener("input", () => filterDropdown(elA, elSearchA.value));
+  elSearchB.addEventListener("input", () => filterDropdown(elB, elSearchB.value));
+
+  // -----------------------
+  // UTIL
+  // -----------------------
+  function isObject(x){ return x && typeof x === "object" && !Array.isArray(x); }
+  function toNum(x){ const n = Number(x); return Number.isFinite(n) ? n : null; }
+  function clamp(x, a, b){ return Math.max(a, Math.min(b, x)); }
+
+  function fmt(n){
+    if (n === null || n === undefined || !Number.isFinite(n)) return "—";
+    return (Math.abs(n - Math.round(n)) < 1e-9) ? String(Math.round(n)) : n.toFixed(1);
+  }
+  function fmtAlpha(){
+    const a = clamp(toNum(elAlpha.value) ?? 0.67, 0, 1);
+    return a.toFixed(2);
+  }
+  function metricLabel(){
+    const m = elMetric.value;
+    return m === "run" ? "Run impact" : m === "wicket" ? "Wicket impact" : "Total impact";
+  }
+  function weightsLabel(){
+    return elWeightMode.value === "equal" ? "equal" : "custom";
+  }
+
+  // Red → White → Green at 50 (score 0–100)
+  function redWhiteGreen(score){
+    const s = clamp(toNum(score) ?? 0, 0, 100);
+    const red   = [217, 83,  79];
+    const white = [255, 255, 255];
+    const green = [ 76, 175,  80];
+
+    const lerp = (a,b,t)=>a+(b-a)*t;
+    const mix = (c1,c2,t)=>[
+      Math.round(lerp(c1[0],c2[0],t)),
+      Math.round(lerp(c1[1],c2[1],t)),
+      Math.round(lerp(c1[2],c2[2],t)),
+    ];
+    const rgb = (s <= 50) ? mix(red, white, s/50) : mix(white, green, (s-50)/50);
+    return `rgb(${rgb[0]},${rgb[1]},${rgb[2]})`;
+  }
+
+  // -----------------------
+  // DATA ACCESS (0–1 -> *100)
+  // -----------------------
+  function getRun100(batter, type){
+    const v = runData?.values?.[batter]?.[type];
+    const n = toNum(v);
+    return n === null ? null : clamp(n * 100, 0, 100);
+  }
+  function getWicket100(batter, type){
+    const v = wicketData?.values?.[batter]?.[type];
+    const n = toNum(v);
+    return n === null ? null : clamp(n * 100, 0, 100);
+  }
+  function getTotal100(batter, type){
+    const r = getRun100(batter, type);
+    const w = getWicket100(batter, type);
+    if (r === null && w === null) return null;
+    if (r === null) return w;
+    if (w === null) return r;
+    return (r + w) / 2;
+  }
+  function getMetric100(batter, type, metric){
+    if (metric === "run") return getRun100(batter, type);
+    if (metric === "wicket") return getWicket100(batter, type);
+    return getTotal100(batter, type);
+  }
+
+  // Pair logic (uses run/wicket even if metric is total)
+  function pairRun100(a, b, type, alpha){
+    const ar = getRun100(a, type), br = getRun100(b, type);
+    if (ar === null && br === null) return null;
+    if (ar === null) return br;
+    if (br === null) return ar;
+    const mx = Math.max(ar, br), mn = Math.min(ar, br);
+    return alpha*mx + (1-alpha)*mn;
+  }
+  function pairWicket100(a, b, type, alpha){
+    const aw = getWicket100(a, type), bw = getWicket100(b, type);
+    if (aw === null && bw === null) return null;
+    if (aw === null) return bw;
+    if (bw === null) return aw;
+    const mx = Math.max(aw, bw), mn = Math.min(aw, bw);
+    // per your screenshot: α*min + (1-α)*max
+    return alpha*mn + (1-alpha)*mx;
+  }
+  function pairTotal100(a, b, type, alpha){
+    const pr = pairRun100(a,b,type,alpha);
+    const pw = pairWicket100(a,b,type,alpha);
+    if (pr === null && pw === null) return null;
+    if (pr === null) return pw;
+    if (pw === null) return pr;
+    return (pr + pw) / 2;
+  }
+  function pairMetric100(a, b, type, alpha, metric){
+    if (metric === "run") return pairRun100(a,b,type,alpha);
+    if (metric === "wicket") return pairWicket100(a,b,type,alpha);
+    return pairTotal100(a,b,type,alpha);
+  }
+
+  // -----------------------
+  // WEIGHTS
+  // -----------------------
+  function setEqualWeights(){
     const w = {};
-    let sum = 0;
-    bowlTypes.forEach(bt=>{
-      const val = Number(w0?.[bt] ?? 0);
-      w[bt] = Number.isFinite(val) ? val : 0;
-      sum += w[bt];
-    });
-    return { w, sum };
-  }
-  const w0 = FILE_WEIGHTS || {};
-  const w = {};
-  let sum = 0;
-  bowlTypes.forEach(bt=>{
-    const val = Number(w0?.[bt] ?? 0);
-    w[bt] = Number.isFinite(val) ? val : 0;
-    sum += w[bt];
-  });
-  return { w, sum };
-}
-
-/* --- z for each entity --- */
-function computeBatterZ(bat, bt, metric){
-  const run = getVal(RUN, bat, bt);
-  const wk  = getVal(WK,  bat, bt);
-  const tot = run + wk;
-  const b = BASE?.[bt] || null;
-  if(!b) return NaN;
-
-  if(metric === "run") return zscore(run, b.run_mean, b.run_std);
-  if(metric === "wicket") return zscore(wk, b.wk_mean, b.wk_std);
-  return zscore(tot, b.total_mean, b.total_std);
-}
-
-function computePartnershipZ(batA, batB, bt, metric, alpha){
-  const A_run = getVal(RUN, batA, bt);
-  const B_run = getVal(RUN, batB, bt);
-  const A_wk  = getVal(WK,  batA, bt);
-  const B_wk  = getVal(WK,  batB, bt);
-
-  const run_pair = alpha * Math.max(A_run, B_run) + (1-alpha) * Math.min(A_run, B_run);
-  const wk_pair  = alpha * Math.min(A_wk, B_wk)  + (1-alpha) * Math.max(A_wk, B_wk);
-  const tot_pair = run_pair + wk_pair;
-
-  const b = BASE?.[bt] || null;
-  if(!b) return NaN;
-
-  if(metric === "run") return zscore(run_pair, b.run_mean, b.run_std);
-  if(metric === "wicket") return zscore(wk_pair, b.wk_mean, b.wk_std);
-  return zscore(tot_pair, b.total_mean, b.total_std);
-}
-
-function buildTile(bt, metricLabel, z){
-  const div = document.createElement("div");
-  div.className = "tile";
-  div.style.setProperty("--heat", heatFromZ(z));
-  div.innerHTML = `
-    <div class="top">
-      <div class="bt mono">${bt}</div>
-      <div class="tag">${metricLabel}</div>
-    </div>
-    <div class="val">${fmt(z, 2)}</div>
-    <div class="sub">z-score</div>
-  `;
-  return div;
-}
-
-function renderBatterTiles(containerId, batName, metric){
-  const el = $(containerId);
-  el.innerHTML = "";
-  const bowlTypes = RUN.bowl_types;
-  const label = (metric === "run") ? "RUN" : (metric === "wicket") ? "WICKET" : "TOTAL";
-  bowlTypes.forEach(bt=>{
-    const z = computeBatterZ(batName, bt, metric);
-    el.appendChild(buildTile(bt, label, z));
-  });
-}
-
-function renderPartnershipTiles(containerId, batA, batB, metric, alpha){
-  const el = $(containerId);
-  el.innerHTML = "";
-  const bowlTypes = RUN.bowl_types;
-  const label = (metric === "run") ? "RUN" : (metric === "wicket") ? "WICKET" : "TOTAL";
-  bowlTypes.forEach(bt=>{
-    const z = computePartnershipZ(batA, batB, bt, metric, alpha);
-    el.appendChild(buildTile(bt, label, z));
-  });
-}
-
-function computeFinalWeightedZ(batA, batB, metric, alpha, weights){
-  const bowlTypes = RUN.bowl_types;
-  let sum = 0;
-  let wsum = 0;
-
-  bowlTypes.forEach(bt=>{
-    const z = computePartnershipZ(batA, batB, bt, metric, alpha);
-    const w = Number(weights?.[bt] ?? 0);
-    if(!Number.isFinite(z) || !Number.isFinite(w) || w <= 0) return;
-    sum += w * z;
-    wsum += w;
-  });
-
-  if(wsum <= 0) return NaN;
-  return sum / wsum;
-}
-
-/* --- weights editor --- */
-function renderWeightsEditor(bowlTypes){
-  const body = $("weightsBody");
-  body.innerHTML = "";
-
-  if(!customWeights){
-    try{
-      const saved = localStorage.getItem("pm_custom_weights");
-      if(saved) customWeights = JSON.parse(saved);
-    }catch(e){}
-    if(!customWeights) customWeights = {};
+    const v = bowlTypes.length ? 1 / bowlTypes.length : 1;
+    for (const t of bowlTypes) w[t] = v;
+    weights = w;
+    renderWeightsTable();
   }
 
-  bowlTypes.forEach(bt=>{
-    if(customWeights[bt]===undefined){
-      customWeights[bt] = Number(FILE_WEIGHTS?.[bt] ?? (1/bowlTypes.length));
+  function normalizeWeights(){
+    let s = 0;
+    for (const t of bowlTypes) s += (toNum(weights[t]) ?? 0);
+    if (s <= 0) {
+      setEqualWeights();
+      return;
     }
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td class="mono">${bt}</td>
-      <td style="width:160px;">
-        <input class="wIn" data-bt="${bt}" type="number" step="0.001" value="${customWeights[bt]}" />
-      </td>
-    `;
-    body.appendChild(tr);
-  });
-
-  [...document.querySelectorAll(".wIn")].forEach(inp=>{
-    inp.addEventListener("input", ()=>{
-      const bt = inp.getAttribute("data-bt");
-      const v = Number(inp.value);
-      customWeights[bt] = Number.isFinite(v) ? v : 0;
-      try{ localStorage.setItem("pm_custom_weights", JSON.stringify(customWeights)); }catch(e){}
-      calc();
-    });
-  });
-
-  $("weightsBox").style.display = "block";
-}
-
-async function copyWeightsJSON(){
-  const bowlTypes = RUN.bowl_types;
-  const { w } = currentWeights(bowlTypes);
-  const txt = JSON.stringify(w, null, 2);
-  try{
-    await navigator.clipboard.writeText(txt);
-    setStatus("Copied weights JSON to clipboard.", "ok");
-  }catch(e){
-    window.prompt("Copy weights JSON:", txt);
-  }
-}
-
-function resetWeightsToFile(){
-  customWeights = JSON.parse(JSON.stringify(FILE_WEIGHTS || {}));
-  try{ localStorage.setItem("pm_custom_weights", JSON.stringify(customWeights)); }catch(e){}
-  renderWeightsEditor(RUN.bowl_types);
-  $("weightPreset").value = "custom";
-  calc();
-}
-
-/* --- searchable dropdowns (type-to-filter) --- */
-function fillSelect(selectEl, bats, keepValue){
-  const current = keepValue ?? selectEl.value;
-  selectEl.innerHTML = "";
-  bats.forEach(name=>{
-    const o=document.createElement("option");
-    o.value=name; o.textContent=name;
-    selectEl.appendChild(o);
-  });
-  if(current && bats.includes(current)) selectEl.value = current;
-  else if(bats.length) selectEl.value = bats[0];
-}
-
-function applyFilter(which){
-  const q = (which === "A" ? $("searchA").value : $("searchB").value).trim().toLowerCase();
-  const sel = which === "A" ? $("batA") : $("batB");
-  const filtered = q ? ALL_BATS.filter(n => n.toLowerCase().includes(q)) : ALL_BATS.slice();
-  fillSelect(sel, filtered, sel.value);
-}
-
-/* --- main calc --- */
-function calc(){
-  const batA = $("batA").value;
-  const batB = $("batB").value;
-  const metric = $("metric").value;
-
-  const alpha = clamp(Number($("alpha").value || 0.67), 0, 1);
-  $("alpha").value = alpha.toFixed(2);
-
-  const bowlTypes = RUN.bowl_types;
-
-  const cw = currentWeights(bowlTypes);
-  $("weightSum").textContent = `sum: ${fmt(cw.sum, 3)}`;
-
-  if($("weightPreset").value === "custom"){
-    renderWeightsEditor(bowlTypes);
-  } else {
-    $("weightsBox").style.display = "none";
+    for (const t of bowlTypes) weights[t] = (toNum(weights[t]) ?? 0) / s;
   }
 
-  $("nameA").textContent = batA;
-  $("nameB").textContent = batB;
-  $("nameP").textContent = `${batA} + ${batB}`;
-  $("pairTitle").textContent = `${batA} + ${batB}`;
-
-  const metricLabel = (metric === "run") ? "Run impact" : (metric === "wicket") ? "Wicket impact" : "Total impact";
-  $("metaRight").textContent = `${metricLabel} · alpha=${alpha.toFixed(2)} · weights=${$("weightPreset").value}`;
-  $("metaA").textContent = metricLabel;
-  $("metaB").textContent = metricLabel;
-  $("metaP").textContent = metricLabel;
-
-  renderBatterTiles("tilesA", batA, metric);
-  renderBatterTiles("tilesB", batB, metric);
-  renderPartnershipTiles("tilesP", batA, batB, metric, alpha);
-
-  const finalZ = computeFinalWeightedZ(batA, batB, metric, alpha, cw.w);
-  $("finalScore").textContent = fmt(finalZ, 2);
-  $("finalBox").style.setProperty("--heat", heatFromZ(finalZ));
-  $("finalLabel").textContent = `Final score (weighted z) · ${metricLabel}`;
-  $("finalSub").textContent = "Σ w × z / Σ w";
-
-  setStatus("Calculated.", "ok");
-}
-
-function populateInitialDropdowns(bats){
-  ALL_BATS = bats.slice();
-  fillSelect($("batA"), bats, null);
-  fillSelect($("batB"), bats, null);
-  if(bats.length >= 2){
-    $("batA").value = bats[0];
-    $("batB").value = bats[1];
+  function weightsSum(){
+    let s=0;
+    for (const t of bowlTypes) s += (toNum(weights[t]) ?? 0);
+    return s;
   }
-}
 
-async function init(){
-  try{
-    setStatus("Loading data…");
+  function renderWeightsTable(){
+    elWeightsBody.innerHTML = "";
+    for (const t of bowlTypes){
+      const tr = document.createElement("tr");
 
-    RUN = await loadJSON("run_pivot.json");
-    WK  = await loadJSON("wicket_pivot.json");
-    BASE = await loadJSON("baseline.json");
-    FILE_WEIGHTS = await loadJSON("weights.json");
+      const td1 = document.createElement("td");
+      td1.textContent = t;
 
-    if(!RUN?.bats?.length) throw new Error("run_pivot.json missing bats[]");
-    if(!RUN?.bowl_types?.length) throw new Error("run_pivot.json missing bowl_types[]");
+      const td2 = document.createElement("td");
+      const inp = document.createElement("input");
+      inp.className = "wInput";
+      inp.type = "number";
+      inp.step = "0.01";
+      inp.min = "0";
+      inp.value = (toNum(weights[t]) ?? 0).toFixed(2).replace(/\.00$/,".0").replace(/(\.\d)0$/,"$1");
+      inp.disabled = (elWeightMode.value !== "custom");
 
-    populateInitialDropdowns(RUN.bats);
+      inp.addEventListener("input", () => {
+        weights[t] = clamp(toNum(inp.value) ?? 0, 0, 1e9);
+        if (elNormalize.checked) normalizeWeights();
+        elWSumPill.textContent = `sum: ${weightsSum().toFixed(3)}`;
+      });
+      inp.addEventListener("change", () => {
+        if (elNormalize.checked) normalizeWeights();
+        renderWeightsTable();
+        recalcAll();
+      });
 
-    $("calcBtn").addEventListener("click", calc);
+      td2.appendChild(inp);
+      tr.appendChild(td1);
+      tr.appendChild(td2);
+      elWeightsBody.appendChild(tr);
+    }
+    elWSumPill.textContent = `sum: ${weightsSum().toFixed(3)}`;
+  }
 
-    ["metric","alpha","weightPreset","normalizeWeights"].forEach(id=>{
-      $(id).addEventListener("change", ()=>calc());
-    });
+  function resetWeights(){
+    // if you had file-defined weights, you could load them here.
+    // for now: equal weights as a clean reset, and switch to custom.
+    elWeightMode.value = "custom";
+    setEqualWeights();
+    elNormalize.checked = true;
+    normalizeWeights();
+    renderWeightsTable();
+    recalcAll();
+  }
 
-    // When selection changes, recalc
-    $("batA").addEventListener("change", ()=>calc());
-    $("batB").addEventListener("change", ()=>calc());
-
-    // Search -> filter options (type-to-filter)
-    $("searchA").addEventListener("input", ()=>applyFilter("A"));
-    $("searchB").addEventListener("input", ()=>applyFilter("B"));
-
-    $("copyWeights").addEventListener("click", copyWeightsJSON);
-    $("resetWeights").addEventListener("click", resetWeightsToFile);
-
-    // If saved custom weights exist, default to custom
+  async function copyWeightsJSON(){
+    const obj = {};
+    for (const t of bowlTypes) obj[t] = +(toNum(weights[t]) ?? 0).toFixed(6);
+    const txt = JSON.stringify(obj, null, 2);
     try{
-      const saved = localStorage.getItem("pm_custom_weights");
-      if(saved){
-        customWeights = JSON.parse(saved);
-        $("weightPreset").value = "custom";
-      }
-    }catch(e){}
-
-    setStatus(`Loaded ${RUN.bats.length} batters · ${RUN.bowl_types.length} bowl types.`, "ok");
-    calc();
-  }catch(err){
-    console.error(err);
-    setStatus(`Error: ${err.message}. Make sure index.html + JSON files are in the SAME folder.`, "err");
-    $("calcBtn").disabled = true;
+      await navigator.clipboard.writeText(txt);
+      elCalcStatus.textContent = "Copied weights JSON to clipboard.";
+      setTimeout(()=> elCalcStatus.textContent = "Calculated.", 1400);
+    }catch{
+      // fallback
+      prompt("Copy weights JSON:", txt);
+    }
   }
-}
 
-init();
+  // -----------------------
+  // DROPDOWNS + FILTERING
+  // -----------------------
+  function populateSelect(sel, items){
+    const prev = sel.value;
+    sel.innerHTML = "";
+    for (const x of items){
+      const opt = document.createElement("option");
+      opt.value = x;
+      opt.textContent = x;
+      sel.appendChild(opt);
+    }
+    if (items.includes(prev)) sel.value = prev;
+  }
+
+  function filterDropdown(sel, q){
+    const query = (q || "").trim().toLowerCase();
+    const filtered = query ? bats.filter(b => b.toLowerCase().includes(query)) : bats;
+    populateSelect(sel, filtered);
+    // keep selections stable if possible
+    if (!sel.value && filtered.length) sel.value = filtered[0];
+    recalcAll();
+  }
+
+  // -----------------------
+  // RENDER TILES
+  // -----------------------
+  function tileHTML(type, value, tagText){
+    const bg = redWhiteGreen(value ?? 0);
+    return `
+      <div class="tile" style="background:${bg}">
+        <div class="tileTop">
+          <div class="tileType">${type}</div>
+          <div class="tileTag">${tagText}</div>
+        </div>
+        <div class="tileVal">${value === null ? "N/A" : fmt(value)}</div>
+        <div class="tileSub">${metricLabel().toLowerCase()}</div>
+      </div>
+    `;
+  }
+
+  function renderBatterTiles(container, batter){
+    const tag = "TOTAL";
+    container.innerHTML = bowlTypes.map(t => {
+      const v = getMetric100(batter, t, elMetric.value);
+      return tileHTML(t, v, tag);
+    }).join("");
+  }
+
+  function renderPairTiles(container, a, b, alpha){
+    const tag = "TOTAL";
+    container.innerHTML = bowlTypes.map(t => {
+      const v = pairMetric100(a, b, t, alpha, elMetric.value);
+      return tileHTML(t, v, tag);
+    }).join("");
+  }
+
+  function weightedFinalScore(a, b, alpha){
+    let num = 0;
+    let den = 0;
+    for (const t of bowlTypes){
+      const w = toNum(weights[t]) ?? 0;
+      if (w <= 0) continue;
+      const v = pairMetric100(a, b, t, alpha, elMetric.value);
+      if (v === null) continue;
+      num += w * v;
+      den += w;
+    }
+    if (den <= 0) return null;
+    return num / den;
+  }
+
+  function recalcAll(){
+    if (!runData || !wicketData) return;
+
+    const a = elA.value;
+    const b = elB.value;
+    const alpha = clamp(toNum(elAlpha.value) ?? 0.67, 0, 1);
+
+    elNameA.textContent = a || "—";
+    elNameB.textContent = b || "—";
+
+    const metricText = metricLabel();
+    elMetaLine.textContent = `${metricText} · alpha=${alpha.toFixed(2)} · weights=${weightsLabel()}`;
+    elPairMetricLabel.textContent = metricText;
+
+    document.querySelectorAll(".panelHeader .small").forEach(el => el.textContent = metricText);
+
+    elPairTitle.textContent = (a && b) ? `${a} + ${b}` : "—";
+    elFinalBlank.textContent = (a && b) ? `${a} + ${b}` : "—";
+
+    renderBatterTiles(tilesA, a);
+    renderBatterTiles(tilesB, b);
+    renderPairTiles(pairTiles, a, b, alpha);
+
+    const final = weightedFinalScore(a, b, alpha);
+    elFinalKicker.textContent = `FINAL SCORE (WEIGHTED) · ${metricText.toUpperCase()}`;
+    elFinalScore.textContent = final === null ? "—" : fmt(final);
+
+    // color final box too
+    const bg = redWhiteGreen(final ?? 0);
+    elFinalBox.style.background = bg;
+  }
+
+  // -----------------------
+  // LOAD JSON
+  // -----------------------
+  async function loadJSON(url){
+    const res = await fetch(url, { cache:"no-store" });
+    if (!res.ok) throw new Error(`Failed to load ${url} (${res.status})`);
+    return await res.json();
+  }
+
+  async function init(){
+    try{
+      [runData, wicketData] = await Promise.all([loadJSON(RUN_URL), loadJSON(WICKET_URL)]);
+
+      // schema: bats, bowl_types, values
+      bats = Array.isArray(runData?.bats) ? runData.bats.slice() : [];
+      const bats2 = Array.isArray(wicketData?.bats) ? wicketData.bats.slice() : [];
+      bats = Array.from(new Set([...bats, ...bats2])).filter(Boolean).sort((x,y)=>String(x).localeCompare(String(y)));
+
+      bowlTypes = Array.isArray(runData?.bowl_types) ? runData.bowl_types.slice() : [];
+      const bt2 = Array.isArray(wicketData?.bowl_types) ? wicketData.bowl_types.slice() : [];
+      bowlTypes = Array.from(new Set([...bowlTypes, ...bt2])).filter(Boolean);
+
+      // initialize weights: equal, then switch to custom to match your screenshot default
+      setEqualWeights();
+      defaultWeights = JSON.parse(JSON.stringify(weights));
+      elWeightMode.value = "custom";
+      elNormalize.checked = true;
+      normalizeWeights();
+      renderWeightsTable();
+
+      populateSelect(elA, bats);
+      populateSelect(elB, bats);
+
+      // defaults
+      if (bats.length){
+        elA.value = bats[0];
+        elB.value = bats.length > 1 ? bats[1] : bats[0];
+      }
+
+      recalcAll();
+      elCalcStatus.textContent = "Calculated.";
+    }catch(e){
+      console.error(e);
+      elCalcStatus.textContent = `Error: ${e.message}`;
+      tilesA.innerHTML = `<div class="hint">${e.message}</div>`;
+      tilesB.innerHTML = `<div class="hint">Check file paths and JSON schema.</div>`;
+    }
+  }
+
+  init();
 </script>
 </body>
 </html>
